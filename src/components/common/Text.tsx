@@ -1,78 +1,15 @@
-import { Text as RNText, TextStyle, StyleSheet } from 'react-native'
-import { colors, typography } from '../../theme'
+import React from 'react'
+import { Text as RNText, TextProps, TextStyle } from 'react-native'
 
-type TextVariant = 
-  | 'h1' 
-  | 'h2' 
-  | 'h3' 
-  | 'body1' 
-  | 'body2' 
-  | 'caption'
-  | 'button'
-
-interface TextProps {
-  children: React.ReactNode
-  variant?: TextVariant
-  color?: string
-  align?: 'auto' | 'left' | 'right' | 'center' | 'justify'
-  style?: TextStyle
+interface Props extends TextProps {
+  style?: TextStyle | TextStyle[]
 }
 
-export const Text = ({ 
-  children, 
-  variant = 'body1',
-  color,
-  align,
-  style,
-  ...props 
-}: TextProps) => {
-  const textStyle = [
-    styles.base,
-    variant && styles[variant],
-    color && { color },
-    align && { textAlign: align },
-    style,
-  ]
-
+export const Text = ({ style, ...props }: Props) => {
   return (
-    <RNText style={textStyle} {...props}>
-      {children}
-    </RNText>
+    <RNText
+      style={style}
+      {...props}
+    />
   )
-}
-
-const styles = StyleSheet.create({
-  base: {
-    fontSize: typography.size.sm,
-    fontWeight: typography.weight.regular,
-    color: colors.text.primary,
-  },
-  h1: {
-    fontSize: typography.size['2xl'],
-    fontWeight: typography.weight.bold,
-  },
-  h2: {
-    fontSize: typography.size.xl,
-    fontWeight: typography.weight.bold,
-  },
-  h3: {
-    fontSize: typography.size.lg,
-    fontWeight: typography.weight.semibold,
-  },
-  body1: {
-    fontSize: typography.size.sm,
-    fontWeight: typography.weight.regular,
-  },
-  body2: {
-    fontSize: typography.size.xs,
-    fontWeight: typography.weight.regular,
-  },
-  caption: {
-    fontSize: 11,
-    fontWeight: typography.weight.regular,
-  },
-  button: {
-    fontSize: typography.size.sm,
-    fontWeight: typography.weight.semibold,
-  },
-}) 
+} 
