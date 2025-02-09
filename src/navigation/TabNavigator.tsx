@@ -8,7 +8,7 @@ import { View, StyleSheet, Platform, Dimensions, Animated } from 'react-native'
 // Screens
 import { HomeScreen } from '../screens/Home/HomeScreen'
 import { TransactionsScreen } from '../screens/Transactions/TransactionsScreen'
-import { AddTransactionScreen } from '../screens/add-transaction/AddTransactionScreen'
+import { AddTransactionScreen } from '../screens/AddTransaction'
 import { ReportsScreen } from '../screens/Reports/ReportsScreen'
 import { ProfileScreen } from '../screens/profile/ProfileScreen'
 

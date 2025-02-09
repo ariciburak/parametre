@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { colors } from '../../theme'
 import { TransactionTypeSelector } from './components/TransactionTypeSelector'
 import { AmountInput } from './components/AmountInput'
+import { CategorySelector } from './components/CategorySelector'
 import type { TransactionType } from '../../constants/transactions'
 import type { TransactionFormValues } from '../../types/transaction'
 
@@ -33,6 +34,11 @@ export const AddTransactionScreen = () => {
           value={formValues.amount}
           type={formValues.type}
           onChange={value => handleChange('amount', value)}
+        />
+        <CategorySelector
+          type={formValues.type}
+          value={formValues.categoryId}
+          onChange={value => handleChange('categoryId', value)}
         />
       </View>
     </SafeAreaView>
