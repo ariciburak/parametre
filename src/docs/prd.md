@@ -63,7 +63,7 @@ Gelir Gider Takip Uygulaması, kullanıcıların finansal durumlarını kolayca 
 - Zustand (state management)
 - Axios (API istekleri)
 - React Navigation
-- React Native Paper (UI kütüphanesi)
+- Victory Native (grafik kütüphanesi)
 
 ### Backend & Veritabanı
 - Firebase Authentication (kullanıcı yönetimi)
