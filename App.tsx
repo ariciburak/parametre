@@ -8,7 +8,7 @@ import { Container } from './src/components/common/Container';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Input } from './src/components/common/Input';
-import { Select } from './src/components/common/Select';
+import { Select, SelectOption } from './src/components/common/Select';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(false)
@@ -73,7 +73,7 @@ export default function App() {
     </View>
   ) : undefined
 
-  const categories = [
+  const categories: SelectOption[] = [
     { label: 'Yiyecek & İçecek', value: 'food', icon: 'food', color: colors.secondary.main },
     { label: 'Ulaşım', value: 'transport', icon: 'bus', color: colors.primary.main },
     { label: 'Alışveriş', value: 'shopping', icon: 'shopping', color: colors.warning.main },
