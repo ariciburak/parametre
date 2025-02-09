@@ -9,6 +9,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Input } from './src/components/common/Input';
 import { Select, SelectOption } from './src/components/common/Select';
+import { Form } from './src/components/common/Form';
+import * as Yup from 'yup';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(false)
@@ -79,6 +81,19 @@ export default function App() {
     { label: 'Alışveriş', value: 'shopping', icon: 'shopping', color: colors.warning.main },
     { label: 'Faturalar', value: 'bills', icon: 'file-document', color: colors.error.main },
   ]
+
+  const loginSchema = Yup.object().shape({
+    email: Yup.string()
+      .email('Geçerli bir e-posta adresi girin')
+      .required('E-posta adresi gerekli'),
+    password: Yup.string()
+      .min(6, 'Şifre en az 6 karakter olmalı')
+      .required('Şifre gerekli'),
+  })
+
+  const handleLogin = async (values: { email: string; password: string }) => {
+    console.log('Login values:', values)
+  }
 
   return (
     <SafeAreaProvider>
@@ -421,6 +436,54 @@ export default function App() {
           >
             Full Width Button
           </Button>
+        </View>
+
+        {/* Form Test Section */}
+        <View style={styles.buttonContainer}>
+          <Text variant="h3" style={styles.sectionTitle}>
+            Form Özellikleri
+          </Text>
+
+          <Form
+            initialValues={{ email: '', password: '' }}
+            validationSchema={loginSchema}
+            onSubmit={handleLogin}
+          >
+            <Form.Input
+              name="email"
+              label="E-posta"
+              placeholder="E-posta adresinizi girin"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              leftIcon={
+                <MaterialCommunityIcons 
+                  name="email" 
+                  size={20} 
+                  color={colors.text.secondary} 
+                />
+              }
+            />
+
+            <Form.Input
+              name="password"
+              label="Şifre"
+              placeholder="Şifrenizi girin"
+              secureTextEntry={!showPassword}
+              autoCapitalize="none"
+              rightIcon={
+                <MaterialCommunityIcons 
+                  name={showPassword ? "eye-off" : "eye"} 
+                  size={20} 
+                  color={colors.text.secondary} 
+                />
+              }
+              onRightIconPress={() => setShowPassword(!showPassword)}
+            />
+
+            <Form.Button>
+              Giriş Yap
+            </Form.Button>
+          </Form>
         </View>
       </Container>
       <StatusBar style="auto" />
