@@ -68,8 +68,10 @@ export const Button = ({
           />
         ) : (
           <Text 
-            variant="button"
-            color={textColor}
+            style={{
+              ...styles.text,
+              color: textColor,
+            }}
           >
             {children}
           </Text>
@@ -130,5 +132,10 @@ const styles = StyleSheet.create({
   },
   rightIcon: {
     marginLeft: spacing.xs,
+  },
+  text: {
+    fontSize: typography.size.sm,
+    fontFamily: typography.fontFamily.medium,
+    lineHeight: typography.lineHeight.tight * typography.size.sm,
   },
 })

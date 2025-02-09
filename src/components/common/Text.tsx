@@ -43,36 +43,36 @@ export const Text = ({
 
 const styles = StyleSheet.create({
   base: {
-    fontSize: typography.size.md,
+    fontSize: typography.size.sm,
     fontWeight: typography.weight.regular,
     color: colors.text.primary,
   },
   h1: {
-    fontSize: typography.size['3xl'],
-    fontWeight: typography.weight.bold,
-  },
-  h2: {
     fontSize: typography.size['2xl'],
     fontWeight: typography.weight.bold,
   },
-  h3: {
+  h2: {
     fontSize: typography.size.xl,
+    fontWeight: typography.weight.bold,
+  },
+  h3: {
+    fontSize: typography.size.lg,
     fontWeight: typography.weight.semibold,
   },
   body1: {
-    fontSize: typography.size.md,
-    fontWeight: typography.weight.regular,
-  },
-  body2: {
     fontSize: typography.size.sm,
     fontWeight: typography.weight.regular,
   },
-  caption: {
+  body2: {
     fontSize: typography.size.xs,
     fontWeight: typography.weight.regular,
   },
+  caption: {
+    fontSize: 11,
+    fontWeight: typography.weight.regular,
+  },
   button: {
-    fontSize: typography.size.md,
+    fontSize: typography.size.sm,
     fontWeight: typography.weight.semibold,
   },
 }) 

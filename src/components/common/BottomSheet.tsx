@@ -97,7 +97,10 @@ export const BottomSheet = ({
           <View style={styles.header}>
             <View style={styles.handle} />
             {title && (
-              <Text variant="h3" style={styles.title}>
+              <Text 
+                variant="body1" 
+                style={styles.title}
+              >
                 {title}
               </Text>
             )}

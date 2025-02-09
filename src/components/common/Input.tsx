@@ -160,6 +160,7 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: spacing.xs,
     color: colors.text.secondary,
+    fontSize: typography.size.xs,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -174,7 +175,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
     color: colors.text.primary,
-    fontSize: typography.size.md,
+    fontSize: typography.size.sm,
     fontFamily: typography.fontFamily.regular,
     paddingHorizontal: spacing.component.md,
     ...Platform.select({
@@ -203,7 +204,8 @@ const styles = StyleSheet.create({
   helperText: {
     marginTop: spacing.xs,
     color: colors.text.secondary,
-    lineHeight: typography.lineHeight.normal * typography.size.xs,
+    fontSize: 11,
+    lineHeight: 11 * typography.lineHeight.normal,
   },
   inputDisabled: {
     backgroundColor: colors.grey[100],

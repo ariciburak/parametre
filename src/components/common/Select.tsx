@@ -113,6 +113,20 @@ export const Select = ({
           onPress={handlePress}
           disabled={disabled}
         >
+          {selectedOption?.icon && (
+            <View 
+              style={[
+                styles.selectedIcon,
+                selectedOption.color && { backgroundColor: selectedOption.color },
+              ]}
+            >
+              <MaterialCommunityIcons
+                name={selectedOption.icon}
+                size={16}
+                color={colors.common.white}
+              />
+            </View>
+          )}
           <Text 
             style={{
               ...styles.text,
@@ -204,6 +218,7 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: spacing.xs,
     color: colors.text.secondary,
+    fontSize: typography.size.xs,
   },
   container: {
     borderWidth: 1,
@@ -226,7 +241,7 @@ const styles = StyleSheet.create({
   text: {
     flex: 1,
     color: colors.text.primary,
-    fontSize: typography.size.md,
+    fontSize: typography.size.sm,
     fontFamily: typography.fontFamily.regular,
   },
   placeholder: {
@@ -239,7 +254,8 @@ const styles = StyleSheet.create({
   helperText: {
     marginTop: spacing.xs,
     color: colors.text.secondary,
-    lineHeight: typography.lineHeight.normal * typography.size.xs,
+    fontSize: 11,
+    lineHeight: 11 * typography.lineHeight.normal,
   },
   option: {
     flexDirection: 'row',
@@ -262,11 +278,20 @@ const styles = StyleSheet.create({
   },
   optionText: {
     flex: 1,
-    fontSize: typography.size.md,
+    fontSize: typography.size.sm,
     color: colors.text.primary,
   },
   optionTextSelected: {
     color: colors.primary.main,
     fontFamily: typography.fontFamily.medium,
+  },
+  selectedIcon: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.primary.main,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.xs,
   },
 }) 
