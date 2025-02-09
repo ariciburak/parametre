@@ -8,6 +8,7 @@ import { Container } from './src/components/common/Container';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Input } from './src/components/common/Input';
+import { Select } from './src/components/common/Select';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(false)
@@ -16,6 +17,7 @@ export default function App() {
   const [hasCustomHeader, setHasCustomHeader] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState('')
 
   const toggleLoading = () => {
     setIsLoading(!isLoading)
@@ -70,6 +72,13 @@ export default function App() {
       </Button>
     </View>
   ) : undefined
+
+  const categories = [
+    { label: 'Yiyecek & İçecek', value: 'food', icon: 'food', color: colors.secondary.main },
+    { label: 'Ulaşım', value: 'transport', icon: 'bus', color: colors.primary.main },
+    { label: 'Alışveriş', value: 'shopping', icon: 'shopping', color: colors.warning.main },
+    { label: 'Faturalar', value: 'bills', icon: 'file-document', color: colors.error.main },
+  ]
 
   return (
     <SafeAreaProvider>
@@ -238,6 +247,39 @@ export default function App() {
               />
             }
             value="test@email.com"
+          />
+        </View>
+
+        {/* Select Test Section */}
+        <View style={styles.buttonContainer}>
+          <Text variant="h3" style={styles.sectionTitle}>
+            Select Özellikleri
+          </Text>
+
+          <Select
+            label="Normal Select"
+            options={categories}
+            value={selectedCategory}
+            onSelect={setSelectedCategory}
+          />
+
+          <Select
+            label="Error Select"
+            error="Hata mesajı"
+            options={categories}
+          />
+
+          <Select
+            label="Helper Text"
+            helper="Yardımcı metin"
+            options={categories}
+          />
+
+          <Select
+            label="Disabled Select"
+            options={categories}
+            value={categories[0].value}
+            disabled
           />
         </View>
 
