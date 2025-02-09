@@ -7,12 +7,15 @@ import { Button } from './src/components/common/Button';
 import { Container } from './src/components/common/Container';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState } from 'react';
+import { Input } from './src/components/common/Input';
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [isKeyboardAware, setIsKeyboardAware] = useState(false)
   const [backgroundColor, setBackgroundColor] = useState(colors.background.default)
   const [hasCustomHeader, setHasCustomHeader] = useState(false)
+  const [inputValue, setInputValue] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   const toggleLoading = () => {
     setIsLoading(!isLoading)
@@ -161,6 +164,81 @@ export default function App() {
           >
             Custom Header {hasCustomHeader ? '(Açık)' : '(Kapalı)'}
           </Button>
+        </View>
+
+        {/* Input Test Section */}
+        <View style={styles.buttonContainer}>
+          <Text variant="h3" style={styles.sectionTitle}>
+            Input Özellikleri
+          </Text>
+
+          <Input
+            label="Normal Input"
+            placeholder="Bir değer girin"
+          />
+
+          <Input
+            label="Error Input"
+            error="Hata mesajı"
+            value="Hatalı değer"
+          />
+
+          <Input
+            label="Helper Text"
+            helper="Yardımcı metin"
+            placeholder="Bir değer girin"
+          />
+
+          <Input
+            label="Disabled Input"
+            value="Disabled value"
+            editable={false}
+          />
+
+          <Input
+            label="Username"
+            placeholder="Kullanıcı adınızı girin"
+            leftIcon={
+              <MaterialCommunityIcons 
+                name="account" 
+                size={20} 
+                color={colors.text.secondary} 
+              />
+            }
+          />
+
+          <Input
+            label="Password"
+            placeholder="Şifrenizi girin"
+            secureTextEntry={!showPassword}
+            rightIcon={
+              <MaterialCommunityIcons 
+                name={showPassword ? "eye-off" : "eye"} 
+                size={20} 
+                color={colors.text.secondary} 
+              />
+            }
+            onRightIconPress={() => setShowPassword(!showPassword)}
+          />
+
+          <Input
+            label="Email"
+            leftIcon={
+              <MaterialCommunityIcons 
+                name="email" 
+                size={20} 
+                color={colors.text.secondary} 
+              />
+            }
+            rightIcon={
+              <MaterialCommunityIcons 
+                name="check" 
+                size={20} 
+                color={colors.secondary.main} 
+              />
+            }
+            value="test@email.com"
+          />
         </View>
 
         {/* Button Test Section */}

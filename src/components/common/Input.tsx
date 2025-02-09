@@ -8,6 +8,7 @@ import {
   TextStyle,
   Pressable,
   Platform,
+  Animated,
 } from 'react-native'
 import { colors, spacing, typography } from '../../theme'
 import { Text } from './Text'
@@ -33,8 +34,38 @@ export const Input = React.forwardRef<TextInput, InputProps>(({
   inputStyle,
   onRightIconPress,
   editable = true,
+  onFocus,
+  onBlur,
   ...props
 }, ref) => {
+  const [isFocused, setIsFocused] = React.useState(false)
+  const focusAnim = React.useRef(new Animated.Value(0)).current
+
+  const handleFocus = (e: any) => {
+    setIsFocused(true)
+    Animated.timing(focusAnim, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: false,
+    }).start()
+    onFocus?.(e)
+  }
+
+  const handleBlur = (e: any) => {
+    setIsFocused(false)
+    Animated.timing(focusAnim, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: false,
+    }).start()
+    onBlur?.(e)
+  }
+
+  const borderColor = focusAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [colors.border.main, colors.primary.main],
+  })
+
   const labelStyle: TextStyle = {
     ...styles.label,
     ...(error && { color: colors.error.main }),
@@ -50,6 +81,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(({
       borderWidth: 2,
     }),
     ...(!editable && styles.inputDisabled),
+    ...(isFocused && !error && { borderColor: colors.primary.main }),
   }
 
   const textInputStyle: TextStyle = {
@@ -75,7 +107,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(({
         </Text>
       )}
 
-      <View style={inputContainerStyle}>
+      <Animated.View style={[inputContainerStyle, { borderColor }]}>
         {leftIcon && (
           <View style={[
             styles.leftIcon, 
@@ -90,6 +122,8 @@ export const Input = React.forwardRef<TextInput, InputProps>(({
           style={textInputStyle}
           placeholderTextColor={colors.grey[400]}
           editable={editable}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           {...props}
         />
 
@@ -105,7 +139,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(({
             {rightIcon}
           </Pressable>
         )}
-      </View>
+      </Animated.View>
 
       {(error || helper) && (
         <Text variant="caption" style={helperStyle}>
@@ -148,7 +182,6 @@ const styles = StyleSheet.create({
         paddingVertical: 0,
       },
       android: {
-        paddingVertical: 0,
         textAlignVertical: 'center',
       },
     }),
