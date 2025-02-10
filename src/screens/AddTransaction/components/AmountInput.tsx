@@ -1,7 +1,8 @@
 import React from 'react'
-import { TextInput, TextStyle } from 'react-native'
+import { TextInput } from 'react-native'
 import { colors } from '../../../theme'
 import type { TransactionType } from '../../../constants/transactions'
+import { styles } from './AmountInput.styles'
 
 type Props = {
   value: string
@@ -12,17 +13,9 @@ type Props = {
 export const AmountInput = ({ value, type, onChange }: Props) => {
   const color = type === 'income' ? colors.secondary.main : colors.error.main
 
-  const inputStyle: TextStyle = {
-    fontSize: 16,
-    color: colors.text.primary,
-    flex: 1,
-    padding: 0,
-    textAlign: 'right',
-  }
-
   return (
     <TextInput
-      style={inputStyle}
+      style={styles.input}
       value={value}
       onChangeText={onChange}
       placeholder="0.00"

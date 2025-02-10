@@ -7,6 +7,18 @@
 - Sınıf yapılarından kaçınma
 - İterasyon ve modüler yapı kullanımı
 - Değişken adlandırmada yardımcı fiil kullanımı (isLoading, hasError)
+- Kod basitliği ve komponent mimarisi:
+  - Karmaşık kod yapılarından kaçınılmalı
+  - Her mantıksal işlem ayrı bir komponente ayrılmalı (örn: AddTransactionScreen'deki FormField, PhotoUploadField gibi)
+  - Tekrarlanan kodlar tespit edildiğinde hemen yeni bir komponente çıkarılmalı
+  - Komponentler tek bir sorumluluk prensibine uymalı
+  - Büyük ekranlar daha küçük, yönetilebilir komponentlere bölünmeli
+- Stil yönetimi:
+  - Her screen ve komponentin kendi styles dosyası olmalı (örn: AddTransactionScreen.styles.tsx)
+  - Stiller ana dosyadan ayrı tutulmalı ve import edilmeli
+  - Stil dosyaları .styles.tsx uzantısı ile oluşturulmalı
+  - Platform-specific stiller stil dosyasında yönetilmeli
+  - Tema değişkenleri (colors, spacing) stil dosyalarında kullanılmalı
 
 ### Dosya Yapısı Hiyerarşisi
 

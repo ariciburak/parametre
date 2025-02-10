@@ -3,7 +3,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { TabParamList } from './types'
 import { colors } from '../theme'
-import { View, StyleSheet, Platform, Dimensions, Animated } from 'react-native'
+import { View, Platform, Dimensions, Animated } from 'react-native'
+import { styles, tabBarStyle, tabBarLabelStyle } from './TabNavigator.styles'
 
 // Screens
 import { HomeScreen } from '../screens/Home/HomeScreen'
@@ -105,40 +106,8 @@ export const TabNavigator = () => {
       screenOptions={{
         tabBarActiveTintColor: colors.primary.main,
         tabBarInactiveTintColor: colors.text.secondary,
-        tabBarStyle: {
-          position: 'absolute',
-          borderTopWidth: 0,
-          backgroundColor: Platform.select({
-            ios: colors.common.white,
-            android: colors.common.white,
-          }),
-          height: 80,
-          paddingHorizontal: 8,
-          paddingTop: 12,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 8,
-          margin: 20,
-          borderRadius: 20,
-          ...Platform.select({
-            ios: {
-              shadowColor: colors.common.black,
-              shadowOffset: {
-                width: 0,
-                height: 4,
-              },
-              shadowOpacity: 0.1,
-              shadowRadius: 12,
-            },
-            android: {
-              elevation: 8,
-            },
-          }),
-        },
-        tabBarLabelStyle: {
-          fontSize: 11,
-          lineHeight: 14,
-          marginTop: 2,
-          paddingBottom: 4,
-        },
+        tabBarStyle,
+        tabBarLabelStyle,
         headerShown: false,
       }}
     >
@@ -280,61 +249,4 @@ export const TabNavigator = () => {
       />
     </Tab.Navigator>
   )
-}
-
-const styles = StyleSheet.create({
-  tabItem: {
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    height: 36,
-    width: 64,
-  },
-  iconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 42,
-    height: 28,
-    borderRadius: 14,
-    marginBottom: 2,
-  },
-  iconContainerActive: {
-    backgroundColor: colors.primary.light + '15', // %15 opacity
-  },
-  addButtonContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 64,
-    height: 64,
-    position: 'absolute',
-    top: -32,
-  },
-  addButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
-    backgroundColor: colors.primary.main,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.primary.main,
-        shadowOffset: {
-          width: 0,
-          height: 4,
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 8,
-      },
-    }),
-  },
-  addButtonActive: {
-    backgroundColor: colors.primary.dark,
-    transform: [{ scale: 0.95 }],
-  },
-  addButtonIcon: {
-    transform: [{ translateY: -1 }],
-  },
-}) 
+} 

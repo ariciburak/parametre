@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, Platform, ScrollView, Pressable, TextInput } from 'react-native'
+import { View, Platform, ScrollView, Pressable, TextInput } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { colors, spacing } from '../../theme'
+import { colors } from '../../theme'
 import { Text } from '../../components/common/Text'
 import { Button } from '../../components/common/Button'
 import { TransactionTypeSelector } from './components/TransactionTypeSelector'
@@ -14,6 +14,7 @@ import { FormField } from './components/FormField'
 import type { TransactionType } from '../../constants/transactions'
 import type { TransactionFormValues } from '../../types/transaction'
 import { getCategoryById } from '../../constants/categories'
+import { styles } from './AddTransactionScreen.styles'
 
 export const AddTransactionScreen = () => {
   const [formValues, setFormValues] = useState<TransactionFormValues>({
@@ -157,66 +158,4 @@ export const AddTransactionScreen = () => {
       />
     </SafeAreaView>
   )
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.primary.main,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.screen.sm,
-    paddingTop: spacing.md,
-    height: 80,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '600',
-    color: colors.common.white,
-    marginBottom: spacing.xl,
-  },
-  content: {
-    flex: 1,
-    backgroundColor: colors.primary.main,
-    height: 200,
-  },
-  scrollView: {
-    flex: 1,
-    marginTop: -20,
-  },
-  card: {
-    backgroundColor: colors.common.white,
-    padding: spacing.screen.sm,
-    flex: 1,
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    minHeight: '100%',
-  },
-  input: {
-    flex: 1,
-    fontSize: 15,
-    color: colors.text.primary,
-    padding: 0,
-    textAlign: 'right',
-  },
-  footer: {
-    position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 110 : 80,
-    left: 0,
-    right: 0,
-    backgroundColor: colors.common.white,
-    borderTopWidth: 1,
-    borderTopColor: colors.border.light,
-    padding: spacing.screen.sm,
-    paddingBottom: spacing.md,
-    zIndex: 1000,
-    elevation: 1000,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingBottom: Platform.OS === 'ios' ? 180 : 150,
-  },
-}) 
+} 

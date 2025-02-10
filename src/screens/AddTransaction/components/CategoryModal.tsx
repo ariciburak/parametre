@@ -1,11 +1,12 @@
 import React from 'react'
-import { View, StyleSheet, ScrollView, Pressable } from 'react-native'
+import { View, ScrollView, Pressable } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Text } from '../../../components/common/Text'
 import { BottomSheet } from '../../../components/common/BottomSheet'
 import { getCategoriesByType } from '../../../constants/categories'
-import { colors, spacing } from '../../../theme'
+import { colors } from '../../../theme'
 import type { TransactionType } from '../../../constants/transactions'
+import { styles } from './CategoryModal.styles'
 
 type Props = {
   visible: boolean
@@ -59,36 +60,4 @@ export const CategoryModal = ({ visible, onClose, type, value, onChange }: Props
       </ScrollView>
     </BottomSheet>
   )
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  category: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
-  },
-  categorySelected: {
-    backgroundColor: colors.primary.light + '15', // %15 opacity
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
-  },
-  label: {
-    flex: 1,
-    fontSize: 16,
-    color: colors.text.primary,
-  },
-}) 
+} 
