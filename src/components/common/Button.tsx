@@ -89,7 +89,7 @@ export const Button = ({
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: spacing.xs,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -118,8 +118,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.component.md,
   },
   large: {
-    paddingVertical: spacing.component.md,
-    paddingHorizontal: spacing.component.lg,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   fullWidth: {
     width: '100%',
@@ -134,8 +134,7 @@ const styles = StyleSheet.create({
     marginLeft: spacing.xs,
   },
   text: {
-    fontSize: typography.size.sm,
-    fontFamily: typography.fontFamily.medium,
-    lineHeight: typography.lineHeight.tight * typography.size.sm,
+    fontSize: 16,
+    fontWeight: '600',
   },
 })

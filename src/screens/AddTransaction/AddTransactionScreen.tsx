@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { colors, spacing } from '../../theme'
 import { Text } from '../../components/common/Text'
+import { Button } from '../../components/common/Button'
 import { TransactionTypeSelector } from './components/TransactionTypeSelector'
 import { AmountInput } from './components/AmountInput'
 import { CategoryModal } from './components/CategoryModal'
@@ -134,12 +135,13 @@ export const AddTransactionScreen = () => {
 
       {/* Save Button */}
       <View style={styles.footer}>
-        <Pressable 
-          style={styles.saveButton}
-          android_ripple={{ color: colors.primary.dark }}
+        <Button
+          variant="primary"
+          size="large"
+          fullWidth
         >
-          <Text style={styles.saveButtonText}>Kaydet</Text>
-        </Pressable>
+          Kaydet
+        </Button>
       </View>
 
       {/* Category Modal */}
@@ -193,23 +195,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 32,
     minHeight: '100%',
   },
-  field: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
-  },
-  fieldLabel: {
-    fontSize: 15,
-    color: colors.text.secondary,
-    fontWeight: '500',
-  },
-  fieldValue: {
-    flex: 1,
-    fontSize: 16,
-    color: colors.text.primary,
-  },
   input: {
     flex: 1,
     fontSize: 15,
@@ -230,191 +215,8 @@ const styles = StyleSheet.create({
     zIndex: 1000,
     elevation: 1000,
   },
-  saveButton: {
-    backgroundColor: colors.primary.main,
-    borderRadius: spacing.sm,
-    paddingVertical: spacing.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.primary.main,
-        shadowOffset: {
-          width: 0,
-          height: 4,
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 8,
-      },
-    }),
-  },
-  saveButtonText: {
-    color: colors.common.white,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  dateField: {
-    backgroundColor: colors.common.white,
-    borderRadius: 12,
-    marginTop: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.grey[500],
-        shadowOffset: {
-          width: 0,
-          height: 3,
-        },
-        shadowOpacity: 0.15,
-        shadowRadius: 6,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  fieldContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 6,
-    paddingHorizontal: 20,
-    minHeight: 56,
-  },
-  fieldLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  fieldRight: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    gap: spacing.sm,
-    minWidth: 40,
-  },
-  dateValue: {
-    flex: 1,
-    fontSize: 15,
-    color: colors.text.primary,
-    fontWeight: '500',
-    textAlign: 'right',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: colors.common.white,
-    borderRadius: 16,
-    width: '85%',
-    padding: spacing.md,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.md,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text.primary,
-  },
-  modalCloseButton: {
-    padding: 4,
-  },
-  datePicker: {
-    height: 200,
-  },
-  modalButton: {
-    backgroundColor: colors.primary.main,
-    borderRadius: 12,
-    padding: spacing.md,
-    alignItems: 'center',
-    marginTop: spacing.md,
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.primary.main,
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  modalButtonText: {
-    color: colors.common.white,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  categoryIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  categoryText: {
-    fontSize: 15,
-    color: colors.text.primary,
-    fontWeight: '500',
-  },
   scrollContent: {
     flexGrow: 1,
     paddingBottom: Platform.OS === 'ios' ? 180 : 150,
-  },
-  photoPreview: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  photoName: {
-    fontSize: 15,
-    color: colors.text.primary,
-    maxWidth: 150,
-  },
-  photoOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: spacing.md,
-    gap: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
-  },
-  photoOptionText: {
-    fontSize: 16,
-    color: colors.text.primary,
-  },
-  photoThumbnail: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: colors.grey[200],
-    left: -8,
-  },
-  photoInputLabel: {
-    fontSize: 12,
-    color: colors.text.secondary,
-    marginBottom: 4,
-  },
-  photoDescriptionInput: {
-    fontSize: 15,
-    color: colors.text.primary,
-    padding: spacing.xs,
-    minWidth: 150,
-    maxWidth: '70%',
   },
 }) 
