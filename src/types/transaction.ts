@@ -23,4 +23,5 @@ export interface TransactionFormValues {
     type: string
     name: string
   }
+  photoDescription?: string
 } 

@@ -39,6 +39,13 @@ export const categories: Category[] = [
     icon: 'gift',
     color: colors.warning.main,
   },
+  {
+    id: 'other_income',
+    label: 'Diğer',
+    type: 'income',
+    icon: 'label-outline',
+    color: colors.grey[500],
+  },
 
   // Gider Kategorileri
   {
@@ -89,6 +96,13 @@ export const categories: Category[] = [
     type: 'expense',
     icon: 'school',
     color: colors.primary.dark,
+  },
+  {
+    id: 'other_expense',
+    label: 'Diğer',
+    type: 'expense',
+    icon: 'label-outline',
+    color: colors.grey[500],
   },
 ]
 
