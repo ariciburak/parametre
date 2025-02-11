@@ -12,7 +12,6 @@ export const styles = StyleSheet.create({
   selector: {
     width: SELECTOR_WIDTH,
     flexDirection: 'row',
-    backgroundColor: colors.grey[200],
     borderRadius: 16,
     padding: 4,
     position: 'relative',
@@ -23,17 +22,16 @@ export const styles = StyleSheet.create({
     width: BUTTON_WIDTH,
     top: 4,
     bottom: 4,
-    backgroundColor: colors.primary.main,
     borderRadius: 12,
     ...Platform.select({
       ios: {
-        shadowColor: colors.primary.main,
+        shadowColor: colors.grey[900],
         shadowOffset: {
           width: 0,
           height: 2,
         },
-        shadowOpacity: 0.3,
-        shadowRadius: 6,
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
       },
       android: {
         elevation: 4,

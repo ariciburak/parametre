@@ -1,14 +1,14 @@
 export const colors = {
   // Ana renkler
   primary: {
-    main: '#4F46E5',     // Modern indigo - ana marka rengi
-    light: '#818CF8',    // Açık indigo - vurgular için
-    dark: '#3730A3',     // Koyu indigo - basılı durumlar için
+    main: '#4F46E5',     // Mor
+    light: '#6366F1',    // Açık mor
+    dark: '#4338CA',     // Koyu mor
   },
   
   // İkincil renkler (Gelir)
   secondary: {
-    main: '#10B981',     // Yeşil - pozitif durumlar (gelir)
+    main: '#10B981',     // Yeşil
     light: '#34D399',    // Açık yeşil
     dark: '#059669',     // Koyu yeşil
   },
@@ -22,9 +22,9 @@ export const colors = {
 
   // Hata/Gider renkleri
   error: {
-    main: '#F43F5E',     // Yumuşak kırmızı - hatalar ve giderler için
-    light: '#FB7185',    // Açık kırmızı
-    dark: '#BE123C',     // Koyu kırmızı
+    main: '#EF4444',     // Kırmızı - hatalar ve giderler için
+    light: '#F87171',    // Açık kırmızı
+    dark: '#DC2626',     // Koyu kırmızı
   },
 
   // Gri tonları
@@ -51,15 +51,15 @@ export const colors = {
   // Arka plan renkleri
   background: {
     default: '#FFFFFF',
-    paper: '#F8FAFC',    // Daha açık bir gri
+    paper: '#F8FAFC',
     dark: '#0F172A',
   },
 
   // Metin renkleri
   text: {
-    primary: '#0F172A',    // Daha koyu
-    secondary: '#475569',  // Orta ton
-    disabled: '#94A3B8',   // Açık ton
+    primary: '#0F172A',
+    secondary: '#475569',
+    disabled: '#94A3B8',
     inverse: '#FFFFFF',
   },
 

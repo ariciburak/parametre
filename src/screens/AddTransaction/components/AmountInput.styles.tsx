@@ -1,12 +1,21 @@
 import { StyleSheet } from 'react-native'
-import { colors } from '../../../theme'
+import { colors, spacing } from '../../../theme'
 
 export const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
   input: {
-    fontSize: 16,
-    color: colors.text.primary,
     flex: 1,
+    fontSize: 24,
+    fontWeight: '600',
     padding: 0,
     textAlign: 'right',
+  },
+  currency: {
+    fontSize: 24,
+    fontWeight: '600',
   },
 }) 

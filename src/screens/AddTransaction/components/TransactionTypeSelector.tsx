@@ -28,13 +28,23 @@ export const TransactionTypeSelector = ({ value, onChange }: Props) => {
     outputRange: [4, 4 + (SELECTOR_WIDTH - BUTTON_WIDTH - 8)]
   })
 
+  const getBackgroundColor = (type: TransactionType) => {
+    if (value === type) {
+      return type === 'income' ? colors.secondary.main : colors.error.main
+    }
+    return 'transparent'
+  }
+
   return (
     <View style={styles.container}>
-      <View style={styles.selector}>
+      <View style={[styles.selector, { backgroundColor: colors.grey[100] }]}>
         <Animated.View 
           style={[
             styles.activeBackground,
-            { transform: [{ translateX: translateAnim }] }
+            { 
+              transform: [{ translateX: translateAnim }],
+              backgroundColor: value === 'income' ? colors.secondary.main : colors.error.main
+            }
           ]} 
         />
         {transactionTypes.map(type => (

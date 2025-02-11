@@ -9,7 +9,7 @@ export default function App() {
       <NavigationContainer>
         <TabNavigator />
       </NavigationContainer>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
     </SafeAreaProvider>
   );
 }
