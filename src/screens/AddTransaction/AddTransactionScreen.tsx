@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Platform, ScrollView, Pressable, TextInput } from 'react-native'
+import { View, Platform, ScrollView, Pressable, TextInput, KeyboardAvoidingView, Keyboard, Animated } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { colors } from '../../theme'
@@ -28,6 +28,40 @@ export const AddTransactionScreen = () => {
   })
 
   const [showCategoryModal, setShowCategoryModal] = useState(false)
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false)
+  const keyboardButtonAnimation = React.useRef(new Animated.Value(0)).current
+
+  React.useEffect(() => {
+    const keyboardWillShow = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true)
+        Animated.spring(keyboardButtonAnimation, {
+          toValue: 1,
+          useNativeDriver: true,
+          tension: 50,
+          friction: 7,
+        }).start()
+      }
+    )
+    const keyboardWillHide = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false)
+        Animated.spring(keyboardButtonAnimation, {
+          toValue: 0,
+          useNativeDriver: true,
+          tension: 50,
+          friction: 7,
+        }).start()
+      }
+    )
+
+    return () => {
+      keyboardWillShow.remove()
+      keyboardWillHide.remove()
+    }
+  }, [])
 
   const handleChange = (field: keyof TransactionFormValues, value: any) => {
     setFormValues(prev => ({
@@ -44,7 +78,11 @@ export const AddTransactionScreen = () => {
       </View>
 
       {/* Content */}
-      <View style={styles.content}>
+      <KeyboardAvoidingView 
+        style={styles.content}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 110 : 0}
+      >
         <ScrollView 
           style={styles.scrollView} 
           showsVerticalScrollIndicator={false}
@@ -132,18 +170,50 @@ export const AddTransactionScreen = () => {
             </FormField>
           </View>
         </ScrollView>
-      </View>
 
-      {/* Save Button */}
-      <View style={styles.footer}>
-        <Button
-          variant="primary"
-          size="large"
-          fullWidth
+        {/* Keyboard Dismiss Button */}
+        <Animated.View
+          style={[
+            styles.keyboardDismissButton,
+            {
+              transform: [
+                {
+                  translateY: keyboardButtonAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [100, 0],
+                  }),
+                },
+              ],
+              opacity: keyboardButtonAnimation,
+            },
+          ]}
         >
-          Kaydet
-        </Button>
-      </View>
+          <Pressable
+            onPress={() => Keyboard.dismiss()}
+            style={({ pressed }) => [
+              styles.dismissButton,
+              pressed && styles.dismissButtonPressed,
+            ]}
+          >
+            <MaterialCommunityIcons
+              name="chevron-down"
+              size={24}
+              color={colors.text.secondary}
+            />
+          </Pressable>
+        </Animated.View>
+
+        {/* Save Button */}
+        <View style={styles.footer}>
+          <Button
+            variant="primary"
+            size="large"
+            fullWidth
+          >
+            Kaydet
+          </Button>
+        </View>
+      </KeyboardAvoidingView>
 
       {/* Category Modal */}
       <CategoryModal

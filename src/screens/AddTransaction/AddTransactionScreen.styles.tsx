@@ -58,4 +58,36 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: Platform.OS === 'ios' ? 180 : 150,
   },
+  keyboardDismissButton: {
+    position: 'absolute',
+    right: spacing.md,
+    bottom: Platform.OS === 'ios' ? 180 : 150,
+    zIndex: 1001,
+    elevation: 1001,
+  },
+  dismissButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.common.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.common.black,
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  dismissButtonPressed: {
+    opacity: 0.7,
+  },
 }) 
