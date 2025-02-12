@@ -4,6 +4,11 @@ export const colors = {
     main: '#4F46E5',     // Mor
     light: '#6366F1',    // Açık mor
     dark: '#4338CA',     // Koyu mor
+    300: '#818CF8',
+    400: '#6366F1',
+    500: '#4F46E5',
+    600: '#4338CA',
+    700: '#3730A3',
   },
   
   // İkincil renkler (Gelir)
@@ -25,6 +30,19 @@ export const colors = {
     main: '#EF4444',     // Kırmızı - hatalar ve giderler için
     light: '#F87171',    // Açık kırmızı
     dark: '#DC2626',     // Koyu kırmızı
+    300: '#FCA5A5',
+    400: '#F87171',
+    500: '#EF4444',
+  },
+
+  // Başarı renkleri
+  success: {
+    main: '#10B981',
+    light: '#34D399',
+    dark: '#059669',
+    300: '#6EE7B7',
+    400: '#34D399',
+    500: '#10B981',
   },
 
   // Gri tonları
@@ -69,4 +87,6 @@ export const colors = {
     main: '#CBD5E1',
     dark: '#94A3B8',
   },
-}
+
+  white: '#FFFFFF',
+};
