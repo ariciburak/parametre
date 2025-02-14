@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet, Pressable, Platform } from 'react-native'
+import { View, StyleSheet, Pressable } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Text } from '../../../components/common/Text'
 import { colors, spacing } from '../../../theme'
@@ -60,32 +60,17 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: spacing.md,
-    backgroundColor: colors.common.white,
-    borderRadius: spacing.sm,
-    marginVertical: spacing.xs,
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.grey[900],
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xs,
   },
   pressed: {
     opacity: 0.7,
+    backgroundColor: colors.grey[50],
   },
   iconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: colors.primary.main,
     alignItems: 'center',
     justifyContent: 'center',

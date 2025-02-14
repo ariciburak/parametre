@@ -23,7 +23,7 @@ export const TransactionsScreen = () => {
         title: 'İşlemler',
         rightComponent: (
           <Text 
-            variant="body2" 
+            variant="body" 
             style={{ color: colors.primary.main }}
             onPress={() => {/* TODO: Filtreleme */}}
           >

@@ -7,6 +7,7 @@ import {
   Pressable,
   Dimensions,
   ViewStyle,
+  Platform,
 } from 'react-native'
 import { colors, spacing } from '../../theme'
 import { Text } from './Text'
@@ -70,9 +71,11 @@ export const BottomSheet = ({
     <Modal
       visible={visible}
       transparent
-      statusBarTranslucent
       animationType="none"
       onRequestClose={onClose}
+      {...Platform.select({
+        android: { statusBarTranslucent: true }
+      })}
     >
       <View style={styles.container}>
         <Pressable 
@@ -98,7 +101,7 @@ export const BottomSheet = ({
             <View style={styles.handle} />
             {title && (
               <Text 
-                variant="body1" 
+                variant="body" 
                 style={styles.title}
               >
                 {title}

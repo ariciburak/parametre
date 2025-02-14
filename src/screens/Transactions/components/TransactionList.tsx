@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet, SectionList } from 'react-native'
+import { View, StyleSheet, SectionList, Platform } from 'react-native'
 import { Text } from '../../../components/common/Text'
 import { colors, spacing } from '../../../theme'
 import { Transaction } from '../../../types/transaction'
@@ -56,29 +56,32 @@ export const TransactionList = ({ transactions, onTransactionPress }: Transactio
   }, [transactions])
 
   const renderSectionHeader = ({ section }: { section: TransactionSection }) => (
-    <View style={styles.sectionHeader}>
-      <Text variant="h3" style={styles.sectionTitle}>
-        {section.title}
-      </Text>
-      <View style={styles.sectionSummary}>
-        <Text style={[styles.summaryText, styles.income]}>
-          {formatCurrency(section.totalIncome)}
+    <View style={styles.sectionCard}>
+      <View style={styles.sectionHeader}>
+        <Text variant="h3" style={styles.sectionTitle}>
+          {section.title}
         </Text>
-        <Text style={[styles.summaryText, styles.expense]}>
-          {formatCurrency(section.totalExpense)}
-        </Text>
+        <View style={styles.sectionSummary}>
+          <Text style={[styles.summaryText, styles.income]}>
+            {formatCurrency(section.totalIncome)}
+          </Text>
+          <Text style={[styles.summaryText, styles.expense]}>
+            {formatCurrency(section.totalExpense)}
+          </Text>
+        </View>
       </View>
+
+      {section.data.map((transaction, index) => (
+        <React.Fragment key={transaction.id}>
+          <TransactionItem 
+            transaction={transaction} 
+            onPress={() => onTransactionPress?.(transaction)}
+          />
+          {index < section.data.length - 1 && <View style={styles.separator} />}
+        </React.Fragment>
+      ))}
     </View>
   )
-
-  const renderItem = ({ item }: { item: Transaction }) => (
-    <TransactionItem 
-      transaction={item} 
-      onPress={() => onTransactionPress?.(item)}
-    />
-  )
-
-  const renderSeparator = () => <View style={styles.separator} />
 
   if (transactions.length === 0) {
     return (
@@ -94,8 +97,9 @@ export const TransactionList = ({ transactions, onTransactionPress }: Transactio
     <SectionList
       sections={sections}
       renderSectionHeader={renderSectionHeader}
-      renderItem={renderItem}
-      stickySectionHeadersEnabled
+      renderItem={() => null}
+      SectionSeparatorComponent={() => <View style={styles.sectionSeparator} />}
+      stickySectionHeadersEnabled={false}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.container}
     />
@@ -104,15 +108,30 @@ export const TransactionList = ({ transactions, onTransactionPress }: Transactio
 
 const styles = StyleSheet.create({
   container: {
-    padding: spacing.screen.sm,
+    paddingHorizontal: spacing.xs,
+    paddingVertical: spacing.screen.sm,
+  },
+  sectionCard: {
+    backgroundColor: colors.common.white,
+    borderRadius: spacing.md,
+    padding: spacing.md,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.grey[900],
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   sectionHeader: {
-    backgroundColor: colors.background.default,
-    paddingVertical: spacing.sm,
-    marginBottom: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
-    marginTop: spacing.md,
+    marginBottom: spacing.md,
   },
   sectionTitle: {
     color: colors.text.primary,
@@ -123,12 +142,9 @@ const styles = StyleSheet.create({
   sectionSummary: {
     flexDirection: 'row',
     gap: spacing.md,
-    backgroundColor: colors.grey[50],
-    padding: spacing.xs,
-    borderRadius: spacing.xs,
   },
   summaryText: {
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: '600',
   },
   income: {
@@ -138,9 +154,12 @@ const styles = StyleSheet.create({
     color: colors.error.main,
   },
   separator: {
-    height: spacing.xs,
-    backgroundColor: colors.grey[100],
-    marginVertical: spacing.xs,
+    height: 1,
+    backgroundColor: colors.border.light,
+    marginVertical: spacing.sm,
+  },
+  sectionSeparator: {
+    height: spacing.md,
   },
   emptyContainer: {
     flex: 1,
