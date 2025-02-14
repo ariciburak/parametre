@@ -19,7 +19,7 @@ import { getCategoryById } from '../../constants/categories'
 import { styles } from './AddTransactionScreen.styles'
 
 const initialFormValues: TransactionFormValues = {
-  type: 'expense',
+  type: 'income',
   amount: '',
   categoryId: '',
   date: new Date(),
@@ -80,15 +80,23 @@ export const AddTransactionScreen = () => {
   const handleSubmit = async () => {
     try {
       setLoading(true)
-      
       // Form validasyonu
-      if (!formValues.amount || !formValues.categoryId) {
+      if (!formValues.amount || formValues.amount === '0') {
         // TODO: Hata gösterimi eklenecek
+        alert('Lütfen bir tutar giriniz')
+        setLoading(false)
         return
       }
 
+      // Eğer kategori seçilmemişse, "Diğer" kategorisini seç
+      const otherCategoryId = formValues.type === 'income' ? 'other_income' : 'other_expense'
+      const categoryId = formValues.categoryId || otherCategoryId
+
       // İşlemi kaydet
-      addTransaction(formValues)
+      addTransaction({
+        ...formValues,
+        categoryId,
+      })
 
       // Form değerlerini sıfırla
       setFormValues(initialFormValues)
@@ -97,7 +105,7 @@ export const AddTransactionScreen = () => {
       navigation.goBack()
     } catch (error) {
       console.error('Transaction save error:', error)
-      // TODO: Hata gösterimi eklenecek
+      alert('İşlem kaydedilirken bir hata oluştu')
     } finally {
       setLoading(false)
     }

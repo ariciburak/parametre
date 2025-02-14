@@ -12,11 +12,11 @@ export const HomeScreen = () => {
 
   // Son 7 günün verilerini hazırla
   const last7DaysData = React.useMemo(() => {
-    // Bugünden başlayarak sonraki 7 günü oluştur
+    // Bugünü merkez alarak 3 gün öncesi ve 3 gün sonrasını oluştur
     const dates = Array.from({ length: 7 }, (_, i) => {
       const date = new Date()
       date.setHours(0, 0, 0, 0)
-      date.setDate(date.getDate() + i) // Bugünden başlayıp ileri doğru git
+      date.setDate(date.getDate() + (i - 3)) // 3 gün önceden 3 gün sonraya
       return date
     })
 
@@ -51,8 +51,6 @@ export const HomeScreen = () => {
       }
     })
   }, [transactions])
-
-  console.log('Son 7 günün verileri:', last7DaysData)
 
   return (
     <Container scroll>

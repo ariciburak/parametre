@@ -60,10 +60,18 @@ const createSmoothPath = (points: { x: number; y: number }[], height: number, ba
 
 export const SpendingChart = ({ data }: SpendingChartProps) => {
   const { width: windowWidth } = useWindowDimensions();
-  const chartWidth = windowWidth - 32; // Padding'i arttırdık
+  const chartWidth = windowWidth - 48;
   const chartHeight = 240;
 
-  console.log('SpendingChart data:', data);
+  const padding = {
+    top: 20,
+    bottom: 50,
+    left: 65,
+    right: 40,
+  };
+
+  const width = chartWidth - padding.left - padding.right;
+  const height = chartHeight - padding.top - padding.bottom;
 
   // Veri kontrolü
   if (!data || data.length === 0) {
@@ -87,189 +95,170 @@ export const SpendingChart = ({ data }: SpendingChartProps) => {
     );
   }
 
-  const padding = {
-    top: 20,
-    bottom: 50,
-    left: 75, // Y ekseni için biraz daha alan
-    right: 16,
-  };
+  // Grafik verilerini hesapla
+  const chartData = React.useMemo(() => {
+    try {
+      // Maksimum değerleri hesapla
+      const maxIncome = Math.max(1000, ...data.map(d => d.income));
+      const maxExpense = Math.max(1000, ...data.map(d => d.expense));
+      const maxValue = Math.max(maxIncome, maxExpense);
+      
+      // Y ekseni için adım değerini hesapla (500'ün katları olacak şekilde)
+      const step = Math.ceil(maxValue / 4 / 500) * 500;
+      const yAxisValues = Array.from({ length: 5 }, (_, i) => step * (4 - i));
 
-  const width = chartWidth - padding.left - padding.right;
-  const height = chartHeight - padding.top - padding.bottom;
+      const xStep = width / (data.length - 1);
+      const xPoints = data.map((_, i) => padding.left + i * xStep);
 
-  try {
-    // Maksimum değerleri hesapla
-    const maxIncome = Math.max(1000, ...data.map(d => d.income));
-    const maxExpense = Math.max(1000, ...data.map(d => d.expense));
-    const maxValue = Math.max(maxIncome, maxExpense);
-    
-    // Y ekseni için adım değerini hesapla (500'ün katları olacak şekilde)
-    const step = Math.ceil(maxValue / 4 / 500) * 500;
-    const yAxisValues = Array.from({ length: 5 }, (_, i) => step * (4 - i));
+      // Calculate points for both series
+      const incomePoints = data.map((point, i) => ({
+        x: xPoints[i],
+        y: padding.top + height - (height * point.income / (step * 4)),
+      }));
 
-    const xStep = width / (data.length - 1);
-    const xPoints = data.map((_, i) => padding.left + i * xStep);
+      const expensePoints = data.map((point, i) => ({
+        x: xPoints[i],
+        y: padding.top + height - (height * point.expense / (step * 4)),
+      }));
 
-    // Calculate points for both series
-    const incomePoints = data.map((point, i) => ({
-      x: xPoints[i],
-      y: padding.top + height - (height * point.income / (step * 4)),
-    }));
+      // Create paths
+      const incomePath = createSmoothPath(incomePoints, height, padding.top + height);
+      const expensePath = createSmoothPath(expensePoints, height, padding.top + height);
 
-    const expensePoints = data.map((point, i) => ({
-      x: xPoints[i],
-      y: padding.top + height - (height * point.expense / (step * 4)),
-    }));
+      return {
+        yAxisValues,
+        incomePoints,
+        expensePoints,
+        incomePath,
+        expensePath,
+        xPoints
+      };
+    } catch (error) {
+      return null;
+    }
+  }, [data, width, height, padding]);
 
-    console.log('Chart data:', {
-      data,
-      xPoints,
-      incomePoints,
-      expensePoints,
-      step,
-      maxValue
-    });
-
-    // Create paths
-    const incomePath = createSmoothPath(incomePoints, height, padding.top + height);
-    const expensePath = createSmoothPath(expensePoints, height, padding.top + height);
-
-    return (
-      <View style={defaultStyles.container}>
-        <LinearGradient
-          colors={["#5B54E8", "#4F46E5", "#3730A3"]}
-          style={defaultStyles.gradientContainer}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          locations={[0, 0.4, 1]}
-        >
-          <Text variant="h3" style={defaultStyles.title}>
-            Gelir/Gider Analizi
-          </Text>
-          <View style={defaultStyles.chartContainer}>
-            <View style={defaultStyles.yAxis}>
-              {yAxisValues.map((value, i) => (
-                <View key={i} style={defaultStyles.yAxisLabelContainer}>
-                  <Text style={defaultStyles.axisLabel}>
-                    {formatCurrency(value)}
-                  </Text>
-                </View>
-              ))}
-            </View>
-
-            <Canvas style={defaultStyles.canvas}>
-              {/* Grid lines */}
-              {yAxisValues.map((_, i) => {
-                const y = padding.top + (height / 4) * i;
-                return (
-                  <Path
-                    key={i}
-                    path={`M ${padding.left} ${y} L ${padding.left + width} ${y}`}
-                    style="stroke"
-                    strokeWidth={1}
-                    color="rgba(255, 255, 255, 0.2)"
-                  />
-                );
-              })}
-
-              {/* Income area */}
-              <Path
-                path={incomePath}
-                style="fill"
-                color="rgba(69, 121, 197, 0.3)"
-              />
-              <Path
-                path={incomePath}
-                style="stroke"
-                strokeWidth={3}
-                color="rgba(69, 121, 197, 0.8)"
-              />
-
-              {/* Expense area */}
-              <Path
-                path={expensePath}
-                style="fill"
-                color="rgba(182, 78, 129, 0.3)"
-              />
-              <Path
-                path={expensePath}
-                style="stroke"
-                strokeWidth={3}
-                color="rgba(182, 78, 129, 0.8)"
-              />
-
-              {/* Data points */}
-              {incomePoints.map((point, i) => data[i].income > 0 && (
-                <Circle
-                  key={`income-${i}`}
-                  cx={point.x}
-                  cy={point.y}
-                  r={3}
-                  color="rgba(69, 121, 197, 1)"
-                />
-              ))}
-              {expensePoints.map((point, i) => data[i].expense > 0 && (
-                <Circle
-                  key={`expense-${i}`}
-                  cx={point.x}
-                  cy={point.y}
-                  r={3}
-                  color="rgba(182, 78, 129, 1)"
-                />
-              ))}
-            </Canvas>
-
-            {/* X axis labels */}
-            <View style={defaultStyles.xAxis}>
-              {data.map((point, i) => (
-                <View
-                  key={i}
-                  style={[
-                    defaultStyles.xLabelContainer,
-                    { left: xPoints[i] - 20 },
-                  ]}
-                >
-                  <Text style={defaultStyles.xLabel}>{point.date}</Text>
-                </View>
-              ))}
-            </View>
-
-            {/* Legend */}
-            <View style={defaultStyles.legend}>
-              <View style={defaultStyles.legendItem}>
-                <View style={[defaultStyles.legendDot, { backgroundColor: '#4579C5' }]} />
-                <Text style={defaultStyles.legendText}>Gelir</Text>
-              </View>
-              <View style={defaultStyles.legendItem}>
-                <View style={[defaultStyles.legendDot, { backgroundColor: '#B64E81' }]} />
-                <Text style={defaultStyles.legendText}>Gider</Text>
-              </View>
-            </View>
-          </View>
-        </LinearGradient>
-      </View>
-    );
-  } catch (error) {
-    console.error('SpendingChart render error:', error);
-    return (
-      <View style={defaultStyles.container}>
-        <LinearGradient
-          colors={["#5B54E8", "#4F46E5", "#3730A3"]}
-          style={defaultStyles.gradientContainer}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          locations={[0, 0.4, 1]}
-        >
-          <Text variant="h3" style={defaultStyles.title}>
-            Gelir/Gider Analizi
-          </Text>
-          <View style={[defaultStyles.chartContainer, { alignItems: 'center', justifyContent: 'center' }]}>
-            <Text style={{ color: colors.white }}>Grafik yüklenirken bir hata oluştu</Text>
-          </View>
-        </LinearGradient>
-      </View>
-    );
+  if (!chartData) {
+    return null;
   }
+
+  const { yAxisValues, incomePoints, expensePoints, incomePath, expensePath, xPoints } = chartData;
+
+  return (
+    <View style={defaultStyles.container}>
+      <LinearGradient
+        colors={["#5B54E8", "#4F46E5", "#3730A3"]}
+        style={defaultStyles.gradientContainer}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        locations={[0, 0.4, 1]}
+      >
+        <Text variant="h3" style={defaultStyles.title}>
+          Gelir/Gider Analizi
+        </Text>
+        <View style={defaultStyles.chartContainer}>
+          <View style={defaultStyles.yAxis}>
+            {yAxisValues.map((value, i) => (
+              <View key={i} style={defaultStyles.yAxisLabelContainer}>
+                <Text style={defaultStyles.axisLabel}>
+                  {formatCurrency(value)}
+                </Text>
+              </View>
+            ))}
+          </View>
+
+          <Canvas style={defaultStyles.canvas}>
+            {/* Grid lines */}
+            {yAxisValues.map((_, i) => {
+              const y = padding.top + (height / 4) * i;
+              return (
+                <Path
+                  key={i}
+                  path={`M ${padding.left} ${y} L ${padding.left + width} ${y}`}
+                  style="stroke"
+                  strokeWidth={1}
+                  color="rgba(255, 255, 255, 0.2)"
+                />
+              );
+            })}
+
+            {/* Income area */}
+            <Path
+              path={incomePath}
+              style="fill"
+              color="rgba(69, 121, 197, 0.3)"
+            />
+            <Path
+              path={incomePath}
+              style="stroke"
+              strokeWidth={3}
+              color="rgba(69, 121, 197, 0.8)"
+            />
+
+            {/* Expense area */}
+            <Path
+              path={expensePath}
+              style="fill"
+              color="rgba(182, 78, 129, 0.3)"
+            />
+            <Path
+              path={expensePath}
+              style="stroke"
+              strokeWidth={3}
+              color="rgba(182, 78, 129, 0.8)"
+            />
+
+            {/* Data points */}
+            {incomePoints.map((point, i) => data[i].income > 0 && (
+              <Circle
+                key={`income-${i}`}
+                cx={point.x}
+                cy={point.y}
+                r={3}
+                color="rgba(69, 121, 197, 1)"
+              />
+            ))}
+            {expensePoints.map((point, i) => data[i].expense > 0 && (
+              <Circle
+                key={`expense-${i}`}
+                cx={point.x}
+                cy={point.y}
+                r={3}
+                color="rgba(182, 78, 129, 1)"
+              />
+            ))}
+          </Canvas>
+
+          {/* X axis labels */}
+          <View style={defaultStyles.xAxis}>
+            {data.map((point, i) => (
+              <View
+                key={i}
+                style={[
+                  defaultStyles.xLabelContainer,
+                  { left: xPoints[i] - 18 },
+                ]}
+              >
+                <Text style={defaultStyles.xLabel}>{point.date}</Text>
+              </View>
+            ))}
+          </View>
+
+          {/* Legend */}
+          <View style={defaultStyles.legend}>
+            <View style={defaultStyles.legendItem}>
+              <View style={[defaultStyles.legendDot, { backgroundColor: '#4579C5' }]} />
+              <Text style={defaultStyles.legendText}>Gelir</Text>
+            </View>
+            <View style={defaultStyles.legendItem}>
+              <View style={[defaultStyles.legendDot, { backgroundColor: '#B64E81' }]} />
+              <Text style={defaultStyles.legendText}>Gider</Text>
+            </View>
+          </View>
+        </View>
+      </LinearGradient>
+    </View>
+  );
 };
 
 const defaultStyles = StyleSheet.create({
@@ -298,7 +287,7 @@ const defaultStyles = StyleSheet.create({
     top: 14,
     bottom: 50,
     justifyContent: "space-between",
-    width: 60,
+    width: 55, // Y ekseni genişliğini azalttık
     paddingLeft: 8,
     paddingRight: 8,
   },
@@ -319,15 +308,16 @@ const defaultStyles = StyleSheet.create({
   xAxis: {
     position: "absolute",
     left: 0,
-    right: 0,
-    bottom: 20,
+    right: 40,
+    bottom: 30,
     height: 30,
   },
   xLabelContainer: {
     position: "absolute",
-    width: 40,
+    width: 36,
     alignItems: "center",
     marginTop: 5,
+    left: -18,
   },
   xLabel: {
     fontSize: 10,
@@ -337,11 +327,15 @@ const defaultStyles = StyleSheet.create({
     includeFontPadding: false,
   },
   legend: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 16,
-    marginTop: 8,
+    paddingBottom: 4,
   },
   legendItem: {
     flexDirection: 'row',
