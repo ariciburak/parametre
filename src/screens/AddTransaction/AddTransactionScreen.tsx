@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { View, Platform, ScrollView, Pressable, TextInput, KeyboardAvoidingView, Keyboard, Animated } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { useNavigation } from '@react-navigation/native'
 import { colors } from '../../theme'
 import { Text } from '../../components/common/Text'
 import { Button } from '../../components/common/Button'
@@ -11,21 +12,27 @@ import { CategoryModal } from './components/CategoryModal'
 import { PhotoUploadField } from './components/PhotoUploadField'
 import { DatePickerField } from './components/DatePickerField'
 import { FormField } from './components/FormField'
+import { useTransactionStore } from '../../store/useTransactionStore'
 import type { TransactionType } from '../../constants/transactions'
 import type { TransactionFormValues } from '../../types/transaction'
 import { getCategoryById } from '../../constants/categories'
 import { styles } from './AddTransactionScreen.styles'
 
+const initialFormValues: TransactionFormValues = {
+  type: 'expense',
+  amount: '',
+  categoryId: '',
+  date: new Date(),
+  description: '',
+  photo: undefined,
+  photoDescription: '',
+}
+
 export const AddTransactionScreen = () => {
-  const [formValues, setFormValues] = useState<TransactionFormValues>({
-    type: 'expense',
-    amount: '',
-    categoryId: '',
-    date: new Date(),
-    description: '',
-    photo: undefined,
-    photoDescription: '',
-  })
+  const navigation = useNavigation()
+  const addTransaction = useTransactionStore(state => state.addTransaction)
+  const [loading, setLoading] = useState(false)
+  const [formValues, setFormValues] = useState<TransactionFormValues>(initialFormValues)
 
   const [showCategoryModal, setShowCategoryModal] = useState(false)
   const [isKeyboardVisible, setKeyboardVisible] = useState(false)
@@ -68,6 +75,32 @@ export const AddTransactionScreen = () => {
       ...prev,
       [field]: value,
     }))
+  }
+
+  const handleSubmit = async () => {
+    try {
+      setLoading(true)
+      
+      // Form validasyonu
+      if (!formValues.amount || !formValues.categoryId) {
+        // TODO: Hata gösterimi eklenecek
+        return
+      }
+
+      // İşlemi kaydet
+      addTransaction(formValues)
+
+      // Form değerlerini sıfırla
+      setFormValues(initialFormValues)
+
+      // Ana sayfaya dön
+      navigation.goBack()
+    } catch (error) {
+      console.error('Transaction save error:', error)
+      // TODO: Hata gösterimi eklenecek
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -209,6 +242,8 @@ export const AddTransactionScreen = () => {
             variant="primary"
             size="large"
             fullWidth
+            loading={loading}
+            onPress={handleSubmit}
           >
             Kaydet
           </Button>
