@@ -15,9 +15,10 @@ interface TransactionSection {
 
 interface TransactionListProps {
   transactions: Transaction[]
+  onTransactionPress?: (transaction: Transaction) => void
 }
 
-export const TransactionList = ({ transactions }: TransactionListProps) => {
+export const TransactionList = ({ transactions, onTransactionPress }: TransactionListProps) => {
   // İşlemleri tarihe göre grupla
   const sections = React.useMemo(() => {
     const groups = transactions.reduce((acc, transaction) => {
@@ -71,8 +72,13 @@ export const TransactionList = ({ transactions }: TransactionListProps) => {
   )
 
   const renderItem = ({ item }: { item: Transaction }) => (
-    <TransactionItem transaction={item} />
+    <TransactionItem 
+      transaction={item} 
+      onPress={() => onTransactionPress?.(item)}
+    />
   )
+
+  const renderSeparator = () => <View style={styles.separator} />
 
   if (transactions.length === 0) {
     return (
@@ -104,24 +110,37 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.default,
     paddingVertical: spacing.sm,
     marginBottom: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.light,
+    marginTop: spacing.md,
   },
   sectionTitle: {
     color: colors.text.primary,
     marginBottom: spacing.xs,
+    fontSize: 18,
+    fontWeight: '600',
   },
   sectionSummary: {
     flexDirection: 'row',
     gap: spacing.md,
+    backgroundColor: colors.grey[50],
+    padding: spacing.xs,
+    borderRadius: spacing.xs,
   },
   summaryText: {
-    fontSize: 12,
-    fontWeight: '500',
+    fontSize: 13,
+    fontWeight: '600',
   },
   income: {
     color: colors.success.main,
   },
   expense: {
     color: colors.error.main,
+  },
+  separator: {
+    height: spacing.xs,
+    backgroundColor: colors.grey[100],
+    marginVertical: spacing.xs,
   },
   emptyContainer: {
     flex: 1,

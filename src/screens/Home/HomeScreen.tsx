@@ -5,7 +5,7 @@ import { Text } from '../../components/common/Text'
 import { BalanceCard } from './components/BalanceCard'
 import { SpendingChart } from './components/SpendingChart'
 import { spacing } from '../../theme/spacing'
-import { useTransactionStore } from '../../store/useTransactionStore'
+import useTransactionStore from '../../store/useTransactionStore'
 
 export const HomeScreen = () => {
   const { transactions, totalIncome, totalExpense } = useTransactionStore()

@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet, Pressable } from 'react-native'
+import { View, StyleSheet, Pressable, Platform } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Text } from '../../../components/common/Text'
 import { colors, spacing } from '../../../theme'
@@ -60,25 +60,39 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: spacing.sm,
+    padding: spacing.md,
     backgroundColor: colors.common.white,
-    borderRadius: spacing.xs,
-    marginBottom: spacing.xs,
+    borderRadius: spacing.sm,
+    marginVertical: spacing.xs,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.grey[900],
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   pressed: {
     opacity: 0.7,
   },
   iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: colors.primary.main,
     alignItems: 'center',
     justifyContent: 'center',
   },
   content: {
     flex: 1,
-    marginLeft: spacing.sm,
+    marginLeft: spacing.md,
   },
   titleRow: {
     flexDirection: 'row',
@@ -87,12 +101,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '600',
     color: colors.text.primary,
   },
   amount: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   income: {
     color: colors.success.main,
