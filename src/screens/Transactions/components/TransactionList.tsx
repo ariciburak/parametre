@@ -108,7 +108,7 @@ export const TransactionList = ({ transactions, onTransactionPress }: Transactio
       renderItem={() => null}
       stickySectionHeadersEnabled={false}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={[styles.container, { paddingBottom: Platform.OS === 'ios' ? 80 : 60 }]}
+      contentContainerStyle={[styles.container, { paddingBottom: Platform.OS === 'ios' ? 140 : 120 }]}
     />
   )
 }

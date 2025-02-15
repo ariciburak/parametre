@@ -1,21 +1,22 @@
-import React from 'react'
-import { View, StyleSheet, SafeAreaView, Platform } from 'react-native'
-import { Text } from '../../components/common/Text'
-import { TransactionList } from './components/TransactionList'
-import { TransactionDetailModal } from './components/TransactionDetailModal'
-import useTransactionStore from '../../store/useTransactionStore'
-import { colors, spacing } from '../../theme'
-import type { Transaction } from '../../types/transaction'
+import React from "react";
+import { View, StyleSheet, SafeAreaView, Platform } from "react-native";
+import { Text } from "../../components/common/Text";
+import { TransactionList } from "./components/TransactionList";
+import { TransactionDetailModal } from "./components/TransactionDetailModal";
+import useTransactionStore from "../../store/useTransactionStore";
+import { colors, spacing } from "../../theme";
+import type { Transaction } from "../../types/transaction";
 
 export const TransactionsScreen = () => {
-  const { transactions } = useTransactionStore()
-  const [selectedTransaction, setSelectedTransaction] = React.useState<Transaction>()
-  const [showDetailModal, setShowDetailModal] = React.useState(false)
+  const { transactions } = useTransactionStore();
+  const [selectedTransaction, setSelectedTransaction] =
+    React.useState<Transaction>();
+  const [showDetailModal, setShowDetailModal] = React.useState(false);
 
   const handleTransactionPress = (transaction: Transaction) => {
-    setSelectedTransaction(transaction)
-    setShowDetailModal(true)
-  }
+    setSelectedTransaction(transaction);
+    setShowDetailModal(true);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -26,8 +27,8 @@ export const TransactionsScreen = () => {
 
       {/* Content */}
       <View style={styles.content}>
-        <TransactionList 
-          transactions={transactions} 
+        <TransactionList
+          transactions={transactions}
           onTransactionPress={handleTransactionPress}
         />
       </View>
@@ -38,8 +39,8 @@ export const TransactionsScreen = () => {
         onClose={() => setShowDetailModal(false)}
       />
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -47,16 +48,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary.main,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingHorizontal: spacing.screen.sm,
     paddingTop: spacing.md,
     height: 80,
   },
   title: {
     fontSize: 28,
-    fontWeight: '600',
+    fontWeight: "600",
     color: colors.common.white,
     marginBottom: spacing.xl,
   },
@@ -65,9 +66,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grey[100],
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
-    paddingTop:8,
     marginTop: -20,
-    paddingBottom: Platform.OS === 'ios' ? 140 : 120,
-    overflow: 'hidden',
   },
-}) 
+});
