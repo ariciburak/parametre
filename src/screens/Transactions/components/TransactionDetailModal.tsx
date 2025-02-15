@@ -1,156 +1,183 @@
-import React from 'react'
-import { View, StyleSheet, Image, Dimensions, Alert } from 'react-native'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { Text } from '../../../components/common/Text'
-import { Button } from '../../../components/common/Button'
-import { BottomSheet } from '../../../components/common/BottomSheet'
-import { colors, spacing } from '../../../theme'
-import { Transaction } from '../../../types/transaction'
-import { formatCurrency } from '../../../utils/currency'
-import { getCategoryById } from '../../../constants/categories'
-import useTransactionStore from '../../../store/useTransactionStore'
+import React from "react";
+import { View, StyleSheet, Image, Dimensions, Alert } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Text } from "../../../components/common/Text";
+import { Button } from "../../../components/common/Button";
+import { BottomSheet } from "../../../components/common/BottomSheet";
+import { colors, spacing } from "../../../theme";
+import { Transaction } from "../../../types/transaction";
+import { formatCurrency } from "../../../utils/currency";
+import { getCategoryById } from "../../../constants/categories";
+import useTransactionStore from "../../../store/useTransactionStore";
 
-const SCREEN_HEIGHT = Dimensions.get('window').height
+const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 interface TransactionDetailModalProps {
-  transaction?: Transaction
-  visible: boolean
-  onClose: () => void
+  transaction?: Transaction;
+  visible: boolean;
+  onClose: () => void;
 }
 
 // Modal içeriğini ayrı bir bileşene taşıyoruz
-const ModalContent = React.memo(({ 
-  transaction, 
-  onClose 
-}: { 
-  transaction: Transaction
-  onClose: () => void 
-}) => {
-  const removeTransaction = useTransactionStore(state => state.removeTransaction)
-  const category = getCategoryById(transaction.categoryId)
-  const date = new Date(transaction.date)
+const ModalContent = React.memo(
+  ({
+    transaction,
+    onClose,
+  }: {
+    transaction: Transaction;
+    onClose: () => void;
+  }) => {
+    const removeTransaction = useTransactionStore(
+      (state) => state.removeTransaction
+    );
+    const category = getCategoryById(transaction.categoryId);
+    const date = new Date(transaction.date);
 
-  const handleDelete = () => {
-    Alert.alert(
-      'İşlemi Sil',
-      'Bu işlemi silmek istediğinize emin misiniz?',
-      [
-        {
-          text: 'İptal',
-          style: 'cancel',
-        },
-        {
-          text: 'Sil',
-          style: 'destructive',
-          onPress: () => {
-            removeTransaction(transaction.id)
-            onClose()
+    const handleDelete = () => {
+      Alert.alert(
+        "İşlemi Sil",
+        "Bu işlemi silmek istediğinize emin misiniz?",
+        [
+          {
+            text: "İptal",
+            style: "cancel",
           },
-        },
-      ],
-      { cancelable: true }
-    )
-  }
+          {
+            text: "Sil",
+            style: "destructive",
+            onPress: () => {
+              removeTransaction(transaction.id);
+              onClose();
+            },
+          },
+        ],
+        { cancelable: true }
+      );
+    };
+    console.log("FAKFAK", transaction.photoDescription);
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <View style={[styles.iconContainer, { backgroundColor: category?.color }]}>
-            <MaterialCommunityIcons
-              name={category?.icon || 'help'}
-              size={24}
-              color={colors.common.white}
-            />
-          </View>
-          <View style={styles.headerContent}>
-            <Text style={styles.category}>
-              {category?.label || 'Diğer'}
-            </Text>
-            <Text
+    return (
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <View style={styles.header}>
+            <View
               style={[
-                styles.amount,
-                transaction.type === 'income' ? styles.income : styles.expense,
+                styles.iconContainer,
+                { backgroundColor: category?.color },
               ]}
             >
-              {formatCurrency(transaction.amount)}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.details}>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Tarih</Text>
-            <Text style={styles.detailValue}>
-              {date.toLocaleDateString('tr-TR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                weekday: 'long',
-              })}
-            </Text>
-          </View>
-
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Tür</Text>
-            <Text style={styles.detailValue}>
-              {transaction.type === 'income' ? 'Gelir' : 'Gider'}
-            </Text>
-          </View>
-
-          {transaction.description && (
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Açıklama</Text>
-              <Text style={styles.detailValue}>
-                {transaction.description}
+              <MaterialCommunityIcons
+                name={category?.icon || "help"}
+                size={24}
+                color={colors.common.white}
+              />
+            </View>
+            <View style={styles.headerContent}>
+              <Text style={styles.category}>{category?.label || "Diğer"}</Text>
+              <Text
+                style={[
+                  styles.amount,
+                  transaction.type === "income"
+                    ? styles.income
+                    : styles.expense,
+                ]}
+              >
+                {formatCurrency(transaction.amount)}
               </Text>
+            </View>
+          </View>
+
+          <View style={styles.details}>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Tarih</Text>
+              <Text style={styles.detailValue}>
+                {date.toLocaleDateString("tr-TR", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  weekday: "long",
+                })}
+              </Text>
+            </View>
+
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Tür</Text>
+              <Text style={styles.detailValue}>
+                {transaction.type === "income" ? "Gelir" : "Gider"}
+              </Text>
+            </View>
+
+            {transaction.description && (
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Açıklama</Text>
+                <Text style={styles.detailValue}>
+                  {transaction.description}
+                </Text>
+              </View>
+            )}
+            {transaction.photoDescription && (
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Fotoğraf Açıklaması</Text>
+                <Text style={styles.detailValue}>
+                  {transaction.photoDescription}
+                </Text>
+              </View>
+            )}
+          </View>
+
+          {transaction.photoUrl && (
+            <View style={styles.photoContainer}>
+              <Image
+                source={{ uri: transaction.photoUrl }}
+                style={styles.photo}
+                resizeMode="contain"
+              />
+              {transaction.photoDescription && (
+                <View style={styles.photoDescriptionContainer}>
+                  <Text style={styles.photoDescription}>
+                    {transaction.photoDescription}
+                  </Text>
+                </View>
+              )}
             </View>
           )}
         </View>
 
-        {transaction.photoUrl && (
-          <View style={styles.photoContainer}>
-            <Image
-              source={{ uri: transaction.photoUrl }}
-              style={styles.photo}
-              resizeMode="contain"
-            />
-          </View>
-        )}
+        <View style={styles.footer}>
+          <Button
+            variant="primary"
+            size="large"
+            fullWidth
+            onPress={handleDelete}
+            leftIcon={
+              <MaterialCommunityIcons
+                name="trash-can-outline"
+                size={20}
+                color={colors.common.white}
+              />
+            }
+            style={[styles.deleteButton, { marginBottom: 16 }]}
+          >
+            İşlemi Sil
+          </Button>
+        </View>
       </View>
+    );
+  }
+);
 
-      <View style={styles.footer}>
-        <Button
-          variant="primary"
-          size="large"
-          fullWidth
-          onPress={handleDelete}
-          leftIcon={
-            <MaterialCommunityIcons
-              name="trash-can-outline"
-              size={20}
-              color={colors.common.white}
-            />
-          }
-          style={[styles.deleteButton, { marginBottom: 16 }]}
-        >
-          İşlemi Sil
-        </Button>
-      </View>
-    </View>
-  )
-})
-
-ModalContent.displayName = 'ModalContent'
+ModalContent.displayName = "ModalContent";
 
 export const TransactionDetailModal = ({
   transaction,
   visible,
   onClose,
 }: TransactionDetailModalProps) => {
-  if (!transaction) return null
+  if (!transaction) return null;
 
-  const modalHeight = transaction.photoUrl ? SCREEN_HEIGHT * 0.8 : SCREEN_HEIGHT * 0.5
+  const modalHeight = transaction.photoUrl
+    ? SCREEN_HEIGHT * 0.8
+    : SCREEN_HEIGHT * 0.5;
 
   return (
     <BottomSheet
@@ -161,8 +188,8 @@ export const TransactionDetailModal = ({
     >
       <ModalContent transaction={transaction} onClose={onClose} />
     </BottomSheet>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -173,8 +200,8 @@ const styles = StyleSheet.create({
     padding: spacing.md,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: spacing.lg,
   },
   iconContainer: {
@@ -182,8 +209,8 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 24,
     backgroundColor: colors.primary.main,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   headerContent: {
     flex: 1,
@@ -191,13 +218,13 @@ const styles = StyleSheet.create({
   },
   category: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     color: colors.text.primary,
     marginBottom: spacing.xs,
   },
   amount: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   income: {
     color: colors.success.main,
@@ -212,9 +239,9 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   detailLabel: {
     fontSize: 14,
@@ -223,22 +250,34 @@ const styles = StyleSheet.create({
   detailValue: {
     fontSize: 14,
     color: colors.text.primary,
-    fontWeight: '500',
+    fontWeight: "500",
     flex: 1,
-    textAlign: 'right',
+    textAlign: "right",
     marginLeft: spacing.md,
   },
   photoContainer: {
     marginTop: spacing.lg,
     borderRadius: spacing.sm,
-    overflow: 'hidden',
+    overflow: "hidden",
     flex: 1,
     minHeight: SCREEN_HEIGHT * 0.3,
     backgroundColor: colors.grey[100],
   },
   photo: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
+  },
+  photoDescriptionContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    padding: spacing.sm,
+  },
+  photoDescription: {
+    color: colors.common.white,
+    fontSize: 14,
   },
   footer: {
     padding: spacing.md,
@@ -247,4 +286,4 @@ const styles = StyleSheet.create({
   deleteButton: {
     backgroundColor: colors.error.main,
   },
-}) 
+});

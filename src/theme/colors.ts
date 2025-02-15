@@ -1,14 +1,14 @@
 export const colors = {
   // Ana renkler
   primary: {
-    main: '#4F46E5',     // Mor
-    light: '#6366F1',    // Açık mor
-    dark: '#4338CA',     // Koyu mor
-    300: '#818CF8',
-    400: '#6366F1',
-    500: '#4F46E5',
-    600: '#4338CA',
-    700: '#3730A3',
+    main: '#1E2B58',     // Lacivert
+    light: '#2A3C75',    // Açık lacivert
+    dark: '#141D3B',     // Koyu lacivert
+    300: '#3A4D8C',
+    400: '#2A3C75',
+    500: '#1E2B58',
+    600: '#141D3B',
+    700: '#0B1124',
   },
   
   // İkincil renkler (Gelir)

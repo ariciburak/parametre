@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, useWindowDimensions, TextStyle } from "react-native";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import {
   Canvas,
@@ -145,29 +145,17 @@ export const SpendingChart = ({ data }: SpendingChartProps) => {
   const { yAxisValues, incomePoints, expensePoints, incomePath, expensePath, xPoints } = chartData;
 
   return (
-    <View style={defaultStyles.container}>
+    <View style={styles.container}>
       <LinearGradient
-        colors={["#5B54E8", "#4F46E5", "#3730A3"]}
-        style={defaultStyles.gradientContainer}
+        colors={["#4C5FBA", "#3A4D8C", "#1E2B58"]}
+        style={styles.gradientContainer}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         locations={[0, 0.4, 1]}
       >
-        <Text variant="h3" style={defaultStyles.title}>
-          Gelir/Gider Analizi
-        </Text>
-        <View style={defaultStyles.chartContainer}>
-          <View style={defaultStyles.yAxis}>
-            {yAxisValues.map((value, i) => (
-              <View key={i} style={defaultStyles.yAxisLabelContainer}>
-                <Text style={defaultStyles.axisLabel}>
-                  {formatCurrency(value)}
-                </Text>
-              </View>
-            ))}
-          </View>
-
-          <Canvas style={defaultStyles.canvas}>
+        <Text variant="h3" style={styles.title}>Gelir/Gider Analizi</Text>
+        <View style={styles.chartContainer}>
+          <Canvas style={styles.canvas}>
             {/* Grid lines */}
             {yAxisValues.map((_, i) => {
               const y = padding.top + (height / 4) * i;
@@ -186,26 +174,26 @@ export const SpendingChart = ({ data }: SpendingChartProps) => {
             <Path
               path={incomePath}
               style="fill"
-              color="rgba(69, 121, 197, 0.3)"
+              color="rgba(76, 95, 186, 0.3)"
             />
             <Path
               path={incomePath}
               style="stroke"
               strokeWidth={3}
-              color="rgba(69, 121, 197, 0.8)"
+              color="rgba(76, 95, 186, 0.8)"
             />
 
             {/* Expense area */}
             <Path
               path={expensePath}
               style="fill"
-              color="rgba(182, 78, 129, 0.3)"
+              color="rgba(239, 68, 68, 0.3)"
             />
             <Path
               path={expensePath}
               style="stroke"
               strokeWidth={3}
-              color="rgba(182, 78, 129, 0.8)"
+              color="rgba(239, 68, 68, 0.8)"
             />
 
             {/* Data points */}
@@ -215,7 +203,7 @@ export const SpendingChart = ({ data }: SpendingChartProps) => {
                 cx={point.x}
                 cy={point.y}
                 r={3}
-                color="rgba(69, 121, 197, 1)"
+                color="rgba(76, 95, 186, 1)"
               />
             ))}
             {expensePoints.map((point, i) => data[i].expense > 0 && (
@@ -224,35 +212,46 @@ export const SpendingChart = ({ data }: SpendingChartProps) => {
                 cx={point.x}
                 cy={point.y}
                 r={3}
-                color="rgba(182, 78, 129, 1)"
+                color="rgba(239, 68, 68, 1)"
               />
             ))}
           </Canvas>
 
+          {/* Y axis labels */}
+          <View style={styles.yAxis}>
+            {yAxisValues.map((value, i) => (
+              <View key={i} style={styles.yAxisLabelContainer}>
+                <Text style={styles.axisLabel}>
+                  {formatCurrency(value)}
+                </Text>
+              </View>
+            ))}
+          </View>
+
           {/* X axis labels */}
-          <View style={defaultStyles.xAxis}>
+          <View style={styles.xAxis}>
             {data.map((point, i) => (
               <View
                 key={i}
                 style={[
-                  defaultStyles.xLabelContainer,
+                  styles.xLabelContainer,
                   { left: xPoints[i] - 18 },
                 ]}
               >
-                <Text style={defaultStyles.xLabel}>{point.date}</Text>
+                <Text style={styles.xLabel}>{point.date}</Text>
               </View>
             ))}
           </View>
 
           {/* Legend */}
-          <View style={defaultStyles.legend}>
-            <View style={defaultStyles.legendItem}>
-              <View style={[defaultStyles.legendDot, { backgroundColor: '#4579C5' }]} />
-              <Text style={defaultStyles.legendText}>Gelir</Text>
+          <View style={styles.legend}>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendDot, { backgroundColor: '#4C5FBA' }]} />
+              <Text style={styles.legendText}>Gelir</Text>
             </View>
-            <View style={defaultStyles.legendItem}>
-              <View style={[defaultStyles.legendDot, { backgroundColor: '#B64E81' }]} />
-              <Text style={defaultStyles.legendText}>Gider</Text>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendDot, { backgroundColor: '#EF4444' }]} />
+              <Text style={styles.legendText}>Gider</Text>
             </View>
           </View>
         </View>
@@ -262,6 +261,99 @@ export const SpendingChart = ({ data }: SpendingChartProps) => {
 };
 
 const defaultStyles = StyleSheet.create({
+  container: {
+    borderRadius: spacing.md,
+    overflow: 'hidden',
+  },
+  gradientContainer: {
+    padding: spacing.md,
+  },
+  title: {
+    marginBottom: spacing.md,
+    color: colors.white,
+  },
+  chartContainer: {
+    position: "relative",
+    height: 240,
+  },
+  canvas: {
+    width: "100%",
+    height: 240,
+  },
+  yAxis: {
+    position: "absolute",
+    left: 0,
+    top: 14,
+    bottom: 50,
+    justifyContent: "space-between",
+    width: 55, // Y ekseni genişliğini azalttık
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
+  yAxisLabelContainer: {
+    height: 20,
+    justifyContent: "center",
+    paddingVertical: 2,
+  },
+  axisLabel: {
+    fontSize: 10,
+    color: colors.white,
+    opacity: 0.8,
+    textAlign: "right",
+    includeFontPadding: false,
+    textAlignVertical: "center",
+    lineHeight: 12,
+  },
+  xAxis: {
+    position: "absolute",
+    left: 0,
+    right: 40,
+    bottom: 30,
+    height: 30,
+  },
+  xLabelContainer: {
+    position: "absolute",
+    width: 36,
+    alignItems: "center",
+    marginTop: 5,
+    left: -18,
+  },
+  xLabel: {
+    fontSize: 10,
+    color: colors.white,
+    opacity: 0.8,
+    textAlign: "center",
+    includeFontPadding: false,
+  },
+  legend: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 16,
+    paddingBottom: 4,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  legendDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  legendText: {
+    fontSize: 12,
+    color: colors.white,
+    opacity: 0.8,
+  },
+});
+
+const styles = StyleSheet.create({
   container: {
     borderRadius: spacing.md,
     overflow: 'hidden',

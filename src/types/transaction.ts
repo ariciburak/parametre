@@ -8,6 +8,7 @@ export interface Transaction {
   date: Date
   description?: string
   photoUrl?: string
+  photoDescription?: string
   createdAt: Date
   updatedAt: Date
 }

@@ -15,7 +15,7 @@ interface BalanceCardProps {
 export const BalanceCard = ({ balance, income, expense }: BalanceCardProps) => {
   return (
     <LinearGradient
-      colors={["#5B54E8", "#4F46E5", "#3730A3"]}
+      colors={["#4C5FBA", "#3A4D8C", "#1E2B58"]}
       style={styles.container}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
@@ -83,10 +83,10 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   income: {
-    color: colors.success[300],
+    color: '#00B4FF',
   },
   expense: {
-    color: colors.error[300],
+    color: '#FF6B6B',
   },
   divider: {
     width: 1,

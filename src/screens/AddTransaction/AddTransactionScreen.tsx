@@ -159,7 +159,7 @@ export const AddTransactionScreen = () => {
 
             {/* Category Selection */}
             <FormField
-              label="Kategori"
+              label={formValues.categoryId ? (getCategoryById(formValues.categoryId)?.label || "Kategori") : "Kategori"}
               icon={formValues.categoryId ? getCategoryById(formValues.categoryId)?.icon : 'shape-outline'}
               iconColor={formValues.categoryId ? getCategoryById(formValues.categoryId)?.color : colors.text.secondary}
               onPress={() => setShowCategoryModal(true)}

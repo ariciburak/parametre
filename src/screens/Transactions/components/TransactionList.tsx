@@ -108,18 +108,17 @@ export const TransactionList = ({ transactions, onTransactionPress }: Transactio
       renderItem={() => null}
       stickySectionHeadersEnabled={false}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.container}
+      contentContainerStyle={[styles.container, { paddingBottom: Platform.OS === 'ios' ? 80 : 60 }]}
     />
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingTop: spacing.md,
   },
   sectionContainer: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
   sectionHeader: {
     flexDirection: 'row',
