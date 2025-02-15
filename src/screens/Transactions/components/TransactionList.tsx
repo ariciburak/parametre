@@ -5,6 +5,7 @@ import { colors, spacing } from '../../../theme'
 import { Transaction } from '../../../types/transaction'
 import { TransactionItem } from './TransactionItem'
 import { formatCurrency } from '../../../utils/currency'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 interface TransactionSection {
   title: string
@@ -56,30 +57,37 @@ export const TransactionList = ({ transactions, onTransactionPress }: Transactio
   }, [transactions])
 
   const renderSectionHeader = ({ section }: { section: TransactionSection }) => (
-    <View style={styles.sectionCard}>
+    <View style={styles.sectionContainer}>
       <View style={styles.sectionHeader}>
-        <Text variant="h3" style={styles.sectionTitle}>
+        <Text style={styles.sectionTitle}>
           {section.title}
         </Text>
-        <View style={styles.sectionSummary}>
-          <Text style={[styles.summaryText, styles.income]}>
-            {formatCurrency(section.totalIncome)}
-          </Text>
-          <Text style={[styles.summaryText, styles.expense]}>
-            {formatCurrency(section.totalExpense)}
-          </Text>
+        <View style={styles.summaryContainer}>
+          <View style={[styles.badge, section.totalIncome > section.totalExpense ? styles.incomeBadge : styles.expenseBadge]}>
+            <MaterialCommunityIcons 
+              name={section.totalIncome > section.totalExpense ? "arrow-up" : "arrow-down"} 
+              size={12} 
+              color={section.totalIncome > section.totalExpense ? colors.success.main : colors.error.main} 
+              style={styles.badgeIcon}
+            />
+            <Text style={[styles.summaryAmount, section.totalIncome > section.totalExpense ? styles.income : styles.expense]}>
+              {formatCurrency(Math.abs(section.totalIncome - section.totalExpense))}
+            </Text>
+          </View>
         </View>
       </View>
 
-      {section.data.map((transaction, index) => (
-        <React.Fragment key={transaction.id}>
-          <TransactionItem 
-            transaction={transaction} 
-            onPress={() => onTransactionPress?.(transaction)}
-          />
-          {index < section.data.length - 1 && <View style={styles.separator} />}
-        </React.Fragment>
-      ))}
+      <View style={styles.transactionsContainer}>
+        {section.data.map((transaction, index) => (
+          <React.Fragment key={transaction.id}>
+            <TransactionItem 
+              transaction={transaction} 
+              onPress={() => onTransactionPress?.(transaction)}
+            />
+            {index < section.data.length - 1 && <View style={styles.separator} />}
+          </React.Fragment>
+        ))}
+      </View>
     </View>
   )
 
@@ -98,7 +106,6 @@ export const TransactionList = ({ transactions, onTransactionPress }: Transactio
       sections={sections}
       renderSectionHeader={renderSectionHeader}
       renderItem={() => null}
-      SectionSeparatorComponent={() => <View style={styles.sectionSeparator} />}
       stickySectionHeadersEnabled={false}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.container}
@@ -108,43 +115,49 @@ export const TransactionList = ({ transactions, onTransactionPress }: Transactio
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: spacing.xs,
-    paddingVertical: spacing.screen.sm,
+    flex: 1,
+    paddingTop: spacing.md,
   },
-  sectionCard: {
-    backgroundColor: colors.common.white,
-    borderRadius: spacing.md,
-    padding: spacing.md,
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.grey[900],
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  sectionHeader: {
+  sectionContainer: {
     marginBottom: spacing.md,
   },
-  sectionTitle: {
-    color: colors.text.primary,
-    marginBottom: spacing.xs,
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  sectionSummary: {
+  sectionHeader: {
     flexDirection: 'row',
-    gap: spacing.md,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.screen.md,
+    paddingVertical: spacing.sm,
+    marginBottom: spacing.xs,
   },
-  summaryText: {
+  sectionTitle: {
     fontSize: 15,
+    fontWeight: '600',
+    color: colors.text.secondary,
+    letterSpacing: 0.2,
+  },
+  summaryContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: 20,
+    backgroundColor: colors.grey[50],
+  },
+  incomeBadge: {
+    backgroundColor: colors.success.main + '10', // %10 opacity
+  },
+  expenseBadge: {
+    backgroundColor: colors.error.main + '10', // %10 opacity
+  },
+  badgeIcon: {
+    marginRight: 4,
+  },
+  summaryAmount: {
+    fontSize: 13,
     fontWeight: '600',
   },
   income: {
@@ -153,13 +166,29 @@ const styles = StyleSheet.create({
   expense: {
     color: colors.error.main,
   },
+  transactionsContainer: {
+    backgroundColor: colors.common.white,
+    borderRadius: 16,
+    marginHorizontal: spacing.screen.sm,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.grey[900],
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
+  },
   separator: {
     height: 1,
-    backgroundColor: colors.border.light,
-    marginVertical: spacing.sm,
-  },
-  sectionSeparator: {
-    height: spacing.md,
+    backgroundColor: colors.grey[100],
+    marginLeft: spacing.screen.sm,
   },
   emptyContainer: {
     flex: 1,

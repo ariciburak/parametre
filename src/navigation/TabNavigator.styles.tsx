@@ -3,17 +3,15 @@ import { colors } from '../theme'
 
 export const tabBarStyle = {
   position: 'absolute',
-  borderTopWidth: 0,
-  backgroundColor: Platform.select({
-    ios: colors.common.white,
-    android: colors.common.white,
-  }),
+  backgroundColor: colors.common.white,
   height: 80,
   paddingHorizontal: 8,
   paddingTop: 12,
   paddingBottom: Platform.OS === 'ios' ? 28 : 8,
   margin: 20,
+  marginBottom: 20,
   borderRadius: 20,
+  borderTopWidth: 0,
   ...Platform.select({
     ios: {
       shadowColor: colors.common.black,

@@ -1,10 +1,10 @@
 import React from 'react'
-import { Container } from '../../components/common/Container'
+import { View, StyleSheet, SafeAreaView, Platform } from 'react-native'
 import { Text } from '../../components/common/Text'
 import { TransactionList } from './components/TransactionList'
 import { TransactionDetailModal } from './components/TransactionDetailModal'
 import useTransactionStore from '../../store/useTransactionStore'
-import { colors } from '../../theme'
+import { colors, spacing } from '../../theme'
 import type { Transaction } from '../../types/transaction'
 
 export const TransactionsScreen = () => {
@@ -18,30 +18,56 @@ export const TransactionsScreen = () => {
   }
 
   return (
-    <Container
-      headerProps={{
-        title: 'İşlemler',
-        rightComponent: (
-          <Text 
-            variant="body" 
-            style={{ color: colors.primary.main }}
-            onPress={() => {/* TODO: Filtreleme */}}
-          >
-            Filtrele
-          </Text>
-        ),
-      }}
-    >
-      <TransactionList 
-        transactions={transactions} 
-        onTransactionPress={handleTransactionPress}
-      />
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>İşlemler</Text>
+      </View>
+
+      {/* Content */}
+      <View style={styles.content}>
+        <TransactionList 
+          transactions={transactions} 
+          onTransactionPress={handleTransactionPress}
+        />
+      </View>
 
       <TransactionDetailModal
         transaction={selectedTransaction}
         visible={showDetailModal}
         onClose={() => setShowDetailModal(false)}
       />
-    </Container>
+    </SafeAreaView>
   )
-} 
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.primary.main,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.screen.sm,
+    paddingTop: spacing.md,
+    height: 80,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '600',
+    color: colors.common.white,
+    marginBottom: spacing.xl,
+  },
+  content: {
+    height: "100%",
+    backgroundColor: colors.grey[100],
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    paddingTop:8,
+    marginTop: -20,
+    paddingBottom: Platform.OS === 'ios' ? 140 : 120,
+    overflow: 'hidden',
+  },
+}) 
