@@ -136,14 +136,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: spacing.screen.sm,
-    paddingTop: spacing.md,
-    height: 80,
+    paddingTop: spacing.sm,
+    height: 60,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "600",
     color: colors.common.white,
-    marginBottom: spacing.xl,
+    marginBottom: spacing.md,
   },
   content: {
     height: "100%",
