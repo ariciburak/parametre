@@ -137,7 +137,6 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: spacing.md,
     padding: spacing.lg,
-    gap: spacing.lg,
   },
   header: {
     flexDirection: "row",
@@ -150,6 +149,8 @@ const styles = StyleSheet.create({
   },
   balance: {
     color: colors.white,
+    marginBottom: spacing.lg,
+    marginTop: spacing.sm,
   },
   statsContainer: {
     flexDirection: "row",
