@@ -13,6 +13,8 @@ export interface Transaction {
   updatedAt: Date
 }
 
+export type Period = 'daily' | 'weekly' | 'monthly' | 'yearly';
+
 export interface TransactionFormValues {
   type: TransactionType
   amount: string
