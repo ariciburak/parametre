@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { View, Platform, ScrollView, Pressable, TextInput, KeyboardAvoidingView, Keyboard, Animated } from 'react-native'
+import { View, Platform, ScrollView, Pressable, TextInput, KeyboardAvoidingView, Keyboard, Animated, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
-import { colors } from '../../theme'
+import { colors, spacing } from '../../theme'
 import { Text } from '../../components/common/Text'
 import { Button } from '../../components/common/Button'
 import { TransactionTypeSelector } from './components/TransactionTypeSelector'
@@ -16,7 +16,6 @@ import useTransactionStore from '../../store/useTransactionStore'
 import type { TransactionType } from '../../constants/transactions'
 import type { TransactionFormValues } from '../../types/transaction'
 import { getCategoryById } from '../../constants/categories'
-import { styles } from './AddTransactionScreen.styles'
 
 const initialFormValues: TransactionFormValues = {
   type: 'income',
@@ -112,7 +111,7 @@ export const AddTransactionScreen = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>İşlem Ekle</Text>
@@ -249,9 +248,9 @@ export const AddTransactionScreen = () => {
           <Button
             variant="primary"
             size="large"
-            fullWidth
             loading={loading}
             onPress={handleSubmit}
+            fullWidth
           >
             Kaydet
           </Button>
@@ -264,11 +263,102 @@ export const AddTransactionScreen = () => {
         onClose={() => setShowCategoryModal(false)}
         type={formValues.type}
         value={formValues.categoryId}
-        onChange={value => {
+        onChange={(value) => {
           handleChange('categoryId', value)
           setShowCategoryModal(false)
         }}
       />
     </SafeAreaView>
   )
-} 
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.primary.main,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "center",
+    paddingHorizontal: spacing.screen.sm,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.lg,
+    height: 70,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "600",
+    color: colors.common.white,
+  },
+  content: {
+    flex: 1,
+    backgroundColor: colors.common.white,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    marginTop: -20,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: Platform.OS === 'ios' ? 180 : 150,
+  },
+  card: {
+    padding: spacing.screen.sm,
+    flex: 1,
+  },
+  input: {
+    flex: 1,
+    fontSize: 15,
+    color: colors.text.primary,
+    padding: 0,
+    textAlign: 'right',
+  },
+  footer: {
+    position: 'absolute',
+    bottom: Platform.OS === 'ios' ? 110 : 80,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.common.white,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.light,
+    padding: spacing.screen.sm,
+    paddingBottom: spacing.md,
+    zIndex: 1000,
+    elevation: 1000,
+  },
+  keyboardDismissButton: {
+    position: 'absolute',
+    right: spacing.md,
+    bottom: Platform.OS === 'ios' ? 180 : 150,
+    zIndex: 1001,
+    elevation: 1001,
+  },
+  dismissButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.common.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.common.black,
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.15,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  dismissButtonPressed: {
+    opacity: 0.7,
+  },
+}) 

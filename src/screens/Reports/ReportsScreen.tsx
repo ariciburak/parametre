@@ -158,17 +158,17 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "center",
     paddingHorizontal: spacing.screen.sm,
     paddingTop: spacing.sm,
-    height: 60,
+    paddingBottom: spacing.lg,
+    height: 70,
   },
   title: {
     fontSize: 24,
     fontWeight: "600",
     color: colors.common.white,
-    marginBottom: spacing.md,
   },
   content: {
     flex: 1,
