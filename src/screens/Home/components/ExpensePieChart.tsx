@@ -65,23 +65,40 @@ export const ExpensePieChart = ({ transactions }: ExpensePieChartProps) => {
           data={chartData.data}
           width={CHART_SIZE}
           height={CHART_SIZE}
-          padding={CHART_SIZE * 0.1}
-          innerRadius={15}
+          padding={CHART_SIZE * 0.2}
+          innerRadius={0}
           cornerRadius={8}
           padAngle={1}
           startAngle={90}
           endAngle={450}
           colorScale={chartData.data.map(d => d.color)}
-          labels={() => null}
+          labels={({ datum }) => datum.label}
+          labelComponent={
+            <VictoryLabel
+              backgroundStyle={{
+                fill: "white",
+                stroke: "white",
+                strokeWidth: 1,
+                marginBottom:4
+              }}
+              backgroundPadding={{ left: 8, top: 4 }}
+              style={{
+                fill: colors.text.primary,
+                fontSize: 11,
+                fontWeight: '500',
+                fontFamily: Platform.select({
+                  ios: 'System',
+                  android: 'sans-serif-medium'
+                })
+              }}
+              renderInPortal={false}
+            />
+          }
           style={{
             data: {
               stroke: colors.common.white,
               strokeWidth: 1,
             },
-          }}
-          animate={{
-            duration: 1000,
-            easing: "cubic"
           }}
         />
       </View>
@@ -124,14 +141,35 @@ const styles = StyleSheet.create({
   amount: {
     fontSize: 15,
     color: colors.text.secondary,
-    marginBottom: spacing.sm,
   },
   chartContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     height: CHART_SIZE,
     position: 'relative',
-    marginBottom: spacing.md,
+
+  },
+  labelsContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  labelContainer: {
+    position: 'absolute',
+  },
+  labelBackground: {
+    backgroundColor: colors.common.white,
+    padding: 4,
+    borderRadius: 4,
+  },
+  labelText: {
+    fontSize: 10,
+    fontWeight: '500',
+    color: colors.text.primary,
   },
   legendContainer: {
     gap: spacing.sm,
