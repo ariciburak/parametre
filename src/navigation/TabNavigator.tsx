@@ -11,7 +11,7 @@ import { HomeScreen } from '../screens/Home/HomeScreen'
 import { TransactionsScreen } from '../screens/Transactions/TransactionsScreen'
 import { AddTransactionScreen } from '../screens/AddTransaction'
 import { ReportsScreen } from '../screens/Reports/ReportsScreen'
-import { ProfileScreen } from '../screens/profile/ProfileScreen'
+import { BudgetScreen } from '../screens/Budget/BudgetScreen'
 
 const Tab = createBottomTabNavigator<TabParamList>()
 const { width } = Dimensions.get('window')
@@ -26,7 +26,7 @@ export const TabNavigator = () => {
     Transactions: React.useRef(new Animated.Value(0)).current,
     AddTransaction: React.useRef(new Animated.Value(0)).current,
     Reports: React.useRef(new Animated.Value(0)).current,
-    Profile: React.useRef(new Animated.Value(0)).current,
+    Budget: React.useRef(new Animated.Value(0)).current,
   }
 
   React.useEffect(() => {
@@ -221,21 +221,21 @@ export const TabNavigator = () => {
         }}
       />
       <Tab.Screen 
-        name="Profile" 
-        component={ProfileScreen}
+        name="Budget" 
+        component={BudgetScreen}
         options={{
-          title: 'Profil',
+          title: 'Bütçe',
           tabBarIcon: ({ focused }) => (
             <View style={styles.tabItem}>
               <Animated.View 
                 style={[
                   styles.iconContainer, 
                   focused && styles.iconContainerActive,
-                  { transform: [{ translateY: getTranslateY('Profile') }] }
+                  { transform: [{ translateY: getTranslateY('Budget') }] }
                 ]}
               >
                 <MaterialCommunityIcons 
-                  name="account" 
+                  name="wallet" 
                   size={24} 
                   color={focused ? colors.primary.main : colors.text.secondary} 
                 />
@@ -244,7 +244,7 @@ export const TabNavigator = () => {
           ),
         }}
         listeners={{
-          tabPress: () => bounce('Profile')
+          tabPress: () => bounce('Budget')
         }}
       />
     </Tab.Navigator>

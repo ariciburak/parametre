@@ -9,10 +9,11 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { Text } from "../../components/common/Text";
 import { BalanceCard } from "./components/BalanceCard";
+import { BudgetCard } from "../../components/home/BudgetCard";
+import { QuickTransactionCard } from "./components/QuickTransactionCard";
+import { ExpensePieChart } from "./components/ExpensePieChart";
 import { RecentTransactions } from "./components/RecentTransactions";
 import { CategorySummary } from "./components/CategorySummary";
-import { ExpensePieChart } from "./components/ExpensePieChart";
-import { QuickTransactionCard } from "./components/QuickTransactionCard";
 import { colors, spacing } from "../../theme";
 import useTransactionStore from "../../store/useTransactionStore";
 import type { Transaction, Period } from "../../types/transaction";
@@ -103,6 +104,9 @@ export const HomeScreen = () => {
             period={selectedPeriod}
             onPeriodChange={setSelectedPeriod}
           />
+
+          {/* Bütçe Kartı */}
+          <BudgetCard />
 
           {/* Hızlı İşlem Kartı */}
           <QuickTransactionCard />

@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import type { Transaction, TransactionFormValues } from '../types/transaction'
+import useBudgetStore from './useBudgetStore'
 
 interface TransactionState {
   transactions: Transaction[]
@@ -14,7 +15,7 @@ interface TransactionState {
 
 const useTransactionStore = create<TransactionState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       transactions: [],
       totalIncome: 0,
       totalExpense: 0,
@@ -47,6 +48,19 @@ const useTransactionStore = create<TransactionState>()(
               ? state.totalExpense + transaction.amount
               : state.totalExpense
 
+          // Bütçe güncelleme
+          if (transaction.type === 'expense') {
+            const date = new Date(transaction.date)
+            const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+            const budget = useBudgetStore.getState().getBudgetByCategory(transaction.categoryId, month)
+            
+            if (budget) {
+              useBudgetStore.getState().updateBudget(budget.id, {
+                spent: budget.spent + transaction.amount
+              })
+            }
+          }
+
           return {
             transactions: newTransactions,
             totalIncome: newTotalIncome,
@@ -69,6 +83,19 @@ const useTransactionStore = create<TransactionState>()(
             transaction.type === 'expense'
               ? state.totalExpense - transaction.amount
               : state.totalExpense
+
+          // Bütçe güncelleme
+          if (transaction.type === 'expense') {
+            const date = new Date(transaction.date)
+            const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+            const budget = useBudgetStore.getState().getBudgetByCategory(transaction.categoryId, month)
+            
+            if (budget) {
+              useBudgetStore.getState().updateBudget(budget.id, {
+                spent: budget.spent - transaction.amount
+              })
+            }
+          }
 
           return {
             transactions: newTransactions,
@@ -108,6 +135,36 @@ const useTransactionStore = create<TransactionState>()(
                 newTotalIncome += updatedTransaction.amount
               } else {
                 newTotalExpense += updatedTransaction.amount
+              }
+            }
+
+            // Bütçe güncelleme
+            if (oldTransaction.type === 'expense') {
+              const date = new Date(oldTransaction.date)
+              const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+              const budget = useBudgetStore.getState().getBudgetByCategory(oldTransaction.categoryId, month)
+              
+              if (budget) {
+                // Eski tutarı çıkar
+                useBudgetStore.getState().updateBudget(budget.id, {
+                  spent: budget.spent - oldTransaction.amount
+                })
+              }
+            }
+
+            // Yeni işlem gider ise yeni tutarı ekle
+            if (updatedTransaction.type === 'expense') {
+              const date = new Date(updatedTransaction.date || oldTransaction.date)
+              const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+              const categoryId = updatedTransaction.categoryId || oldTransaction.categoryId
+              const amount = updatedTransaction.amount || oldTransaction.amount
+              
+              const budget = useBudgetStore.getState().getBudgetByCategory(categoryId, month)
+              
+              if (budget) {
+                useBudgetStore.getState().updateBudget(budget.id, {
+                  spent: budget.spent + amount
+                })
               }
             }
 
