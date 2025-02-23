@@ -7,11 +7,8 @@ import { TransactionsScreen } from '../screens/Transactions/TransactionsScreen'
 import { ReportsScreen } from '../screens/Reports/ReportsScreen'
 import { BudgetScreen } from '../screens/Budget/BudgetScreen'
 import { AddTransactionScreen } from '../screens/AddTransaction'
-import { AddBudgetScreen } from '../screens/Budget/AddBudgetScreen'
-import { BudgetDetailScreen } from '../screens/Budget/BudgetDetailScreen'
 import { colors } from '../theme'
 import type { RootStackParamList, TabParamList } from './types'
-import { CommonActions } from '@react-navigation/native'
 
 const Tab = createBottomTabNavigator<TabParamList>()
 const Stack = createNativeStackNavigator<RootStackParamList>()
@@ -96,20 +93,6 @@ export const MainNavigator = () => {
       <Stack.Screen 
         name="AddTransaction" 
         component={AddTransactionScreen}
-        options={{ presentation: 'modal' }}
-      />
-      <Stack.Screen 
-        name="Budget" 
-        component={BudgetScreen}
-      />
-      <Stack.Screen 
-        name="AddBudget" 
-        component={AddBudgetScreen}
-        options={{ presentation: 'modal' }}
-      />
-      <Stack.Screen 
-        name="BudgetDetail" 
-        component={BudgetDetailScreen}
         options={{ presentation: 'modal' }}
       />
     </Stack.Navigator>

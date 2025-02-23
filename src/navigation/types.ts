@@ -1,8 +1,12 @@
 import { NavigatorScreenParams } from '@react-navigation/native'
+import { BudgetWithCategory } from '../types/budget'
 
 export type RootStackParamList = {
   Main: NavigatorScreenParams<TabParamList>;
   AddTransaction: undefined;
+  Budget: undefined;
+  AddBudget: { month: string };
+  BudgetDetail: { budget: BudgetWithCategory };
 };
 
 // Ana tab navigator tipleri

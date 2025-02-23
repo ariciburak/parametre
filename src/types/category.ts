@@ -2,10 +2,10 @@ import type { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export interface Category {
   id: string;
-  name: string;
+  label: string;
   color: string;
-  icon?: keyof typeof MaterialCommunityIcons.glyphMap;
-  type?: 'income' | 'expense';
+  icon: keyof typeof MaterialCommunityIcons.glyphMap;
+  type: 'income' | 'expense';
 }
 
 export type CategoryId = Category['id']; 

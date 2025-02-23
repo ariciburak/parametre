@@ -21,35 +21,35 @@ import type { Transaction, Period } from "../../types/transaction";
 export const HomeScreen = () => {
   const navigation = useNavigation();
   const { transactions } = useTransactionStore();
-  const [selectedPeriod, setSelectedPeriod] = React.useState<Period>('monthly');
+  const [selectedPeriod, setSelectedPeriod] = React.useState<Period>("monthly");
 
   // Seçili periyoda göre işlemleri filtrele
   const filteredTransactions = React.useMemo(() => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
 
-    return transactions.filter(transaction => {
+    return transactions.filter((transaction) => {
       const transactionDate = new Date(transaction.date);
       transactionDate.setHours(0, 0, 0, 0);
 
       switch (selectedPeriod) {
-        case 'daily':
+        case "daily":
           return transactionDate.getTime() === now.getTime();
 
-        case 'weekly': {
+        case "weekly": {
           const weekStart = new Date(now);
           weekStart.setDate(now.getDate() - now.getDay());
           return transactionDate >= weekStart && transactionDate <= now;
         }
 
-        case 'monthly': {
+        case "monthly": {
           return (
             transactionDate.getMonth() === now.getMonth() &&
             transactionDate.getFullYear() === now.getFullYear()
           );
         }
 
-        case 'yearly': {
+        case "yearly": {
           return transactionDate.getFullYear() === now.getFullYear();
         }
 
@@ -63,7 +63,7 @@ export const HomeScreen = () => {
   const { totalIncome, totalExpense } = React.useMemo(() => {
     return filteredTransactions.reduce(
       (acc, transaction) => {
-        if (transaction.type === 'income') {
+        if (transaction.type === "income") {
           acc.totalIncome += transaction.amount;
         } else {
           acc.totalExpense += transaction.amount;
@@ -84,11 +84,6 @@ export const HomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Ana Sayfa</Text>
-      </View>
-
       {/* Content */}
       <View style={styles.content}>
         <ScrollView
@@ -133,7 +128,7 @@ export const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary.main,
+
   },
   header: {
     flexDirection: "row",
@@ -152,9 +147,7 @@ const styles = StyleSheet.create({
   content: {
     height: "100%",
     backgroundColor: colors.grey[100],
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    marginTop: -20,
+
   },
   scrollView: {
     flex: 1,

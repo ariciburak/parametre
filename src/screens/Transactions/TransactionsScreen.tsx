@@ -20,10 +20,6 @@ export const TransactionsScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>İşlemler</Text>
-      </View>
 
       {/* Content */}
       <View style={styles.content}>
@@ -45,7 +41,6 @@ export const TransactionsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary.main,
   },
   header: {
     flexDirection: "row",
@@ -64,8 +59,6 @@ const styles = StyleSheet.create({
   content: {
     height: "100%",
     backgroundColor: colors.grey[100],
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    marginTop: -20,
+
   },
 });

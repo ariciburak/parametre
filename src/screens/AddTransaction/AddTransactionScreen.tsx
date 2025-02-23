@@ -112,11 +112,6 @@ export const AddTransactionScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>İşlem Ekle</Text>
-      </View>
-
       {/* Content */}
       <KeyboardAvoidingView 
         style={styles.content}
@@ -275,17 +270,9 @@ export const AddTransactionScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary.main,
+    backgroundColor: colors.white,
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "center",
-    paddingHorizontal: spacing.screen.sm,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.lg,
-    height: 70,
-  },
+
   title: {
     fontSize: 24,
     fontWeight: "600",
@@ -294,9 +281,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     backgroundColor: colors.common.white,
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    marginTop: -20,
+
   },
   scrollView: {
     flex: 1,
@@ -318,7 +303,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 110 : 80,
+    bottom: Platform.OS === 'ios' ? 80 : 60,
     left: 0,
     right: 0,
     backgroundColor: colors.common.white,

@@ -82,10 +82,6 @@ export const ReportsScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Raporlar</Text>
-      </View>
 
       {/* Content */}
       <View style={styles.content}>
@@ -154,7 +150,6 @@ export const ReportsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary.main,
   },
   header: {
     flexDirection: "row",
@@ -173,9 +168,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     backgroundColor: colors.grey[100],
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    marginTop: -20,
   },
   scrollView: {
     flex: 1,
