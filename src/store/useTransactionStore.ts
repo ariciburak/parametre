@@ -28,7 +28,6 @@ const useTransactionStore = create<TransactionState>()(
           categoryId: formValues.categoryId,
           date: formValues.date,
           description: formValues.description,
-          photoUrl: formValues.photo?.uri,
           createdAt: new Date(),
           updatedAt: new Date(),
         }

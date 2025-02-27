@@ -7,8 +7,6 @@ export interface Transaction {
   categoryId: string
   date: Date
   description?: string
-  photoUrl?: string
-  photoDescription?: string
   createdAt: Date
   updatedAt: Date
 }
@@ -21,10 +19,4 @@ export interface TransactionFormValues {
   categoryId: string
   date: Date
   description?: string
-  photo?: {
-    uri: string
-    type: string
-    name: string
-  }
-  photoDescription?: string
 } 

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Image, Dimensions, Alert } from "react-native";
+import { View, StyleSheet, Dimensions, Alert } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Text } from "../../../components/common/Text";
 import { Button } from "../../../components/common/Button";
@@ -114,32 +114,7 @@ const ModalContent = React.memo(
                 </Text>
               </View>
             )}
-            {transaction.photoDescription && (
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Fotoğraf Açıklaması</Text>
-                <Text style={styles.detailValue}>
-                  {transaction.photoDescription}
-                </Text>
-              </View>
-            )}
           </View>
-
-          {transaction.photoUrl && (
-            <View style={styles.photoContainer}>
-              <Image
-                source={{ uri: transaction.photoUrl }}
-                style={styles.photo}
-                resizeMode="contain"
-              />
-              {transaction.photoDescription && (
-                <View style={styles.photoDescriptionContainer}>
-                  <Text style={styles.photoDescription}>
-                    {transaction.photoDescription}
-                  </Text>
-                </View>
-              )}
-            </View>
-          )}
         </View>
 
         <View style={styles.footer}>
@@ -174,16 +149,12 @@ export const TransactionDetailModal = ({
 }: TransactionDetailModalProps) => {
   if (!transaction) return null;
 
-  const modalHeight = transaction.photoUrl
-    ? SCREEN_HEIGHT * 0.8
-    : SCREEN_HEIGHT * 0.5;
-
   return (
     <BottomSheet
       visible={visible}
       onClose={onClose}
       title="İşlem Detayı"
-      height={modalHeight}
+      height={SCREEN_HEIGHT * 0.5}
     >
       <ModalContent transaction={transaction} onClose={onClose} />
     </BottomSheet>
@@ -249,34 +220,9 @@ const styles = StyleSheet.create({
   detailValue: {
     fontSize: 14,
     color: colors.text.primary,
-    fontWeight: "500",
+    textAlign: 'right',
     flex: 1,
-    textAlign: "right",
     marginLeft: spacing.md,
-  },
-  photoContainer: {
-    marginTop: spacing.lg,
-    borderRadius: spacing.sm,
-    overflow: "hidden",
-    flex: 1,
-    minHeight: SCREEN_HEIGHT * 0.3,
-    backgroundColor: colors.grey[100],
-  },
-  photo: {
-    width: "100%",
-    height: "100%",
-  },
-  photoDescriptionContainer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    padding: spacing.sm,
-  },
-  photoDescription: {
-    color: colors.common.white,
-    fontSize: 14,
   },
   footer: {
     padding: spacing.md,

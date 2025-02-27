@@ -9,7 +9,6 @@ import { Button } from '../../components/common/Button'
 import { TransactionTypeSelector } from './components/TransactionTypeSelector'
 import { AmountInput } from './components/AmountInput'
 import { CategoryModal } from './components/CategoryModal'
-import { PhotoUploadField } from './components/PhotoUploadField'
 import { DatePickerField } from './components/DatePickerField'
 import { FormField } from './components/FormField'
 import useTransactionStore from '../../store/useTransactionStore'
@@ -23,8 +22,6 @@ const initialFormValues: TransactionFormValues = {
   categoryId: '',
   date: new Date(),
   description: '',
-  photo: undefined,
-  photoDescription: '',
 }
 
 export const AddTransactionScreen = () => {
@@ -180,14 +177,6 @@ export const AddTransactionScreen = () => {
                   />
                 )
               }
-            />
-
-            {/* Photo Upload */}
-            <PhotoUploadField
-              photo={formValues.photo}
-              photoDescription={formValues.photoDescription}
-              onPhotoChange={(photo) => handleChange('photo', photo)}
-              onPhotoDescriptionChange={(description) => handleChange('photoDescription', description)}
             />
 
             {/* Note Input */}
