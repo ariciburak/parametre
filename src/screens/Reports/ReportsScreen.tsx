@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { View, StyleSheet, ScrollView, SafeAreaView, Platform, StatusBar } from 'react-native';
 import useTransactionStore from '../../store/useTransactionStore';
 import { spacing, colors } from '../../theme';
 import { PeriodSelector } from './components/PeriodSelector';
@@ -150,6 +150,8 @@ export const ReportsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.grey[100],
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
     flexDirection: "row",
@@ -175,7 +177,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     gap: spacing.lg,
     padding: spacing.screen.sm,
-    paddingBottom: spacing.screen.sm * 2,
+    paddingBottom: Platform.OS === 'ios' ? 100 : 90,
   },
   section: {
     marginBottom: spacing.md,
@@ -185,6 +187,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: spacing.xl * 2,
     gap: spacing.md,
+    marginBottom: Platform.OS === 'ios' ? 80 : 70,
   },
   emptyTitle: {
     fontSize: 18,

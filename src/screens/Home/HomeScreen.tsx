@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   ScrollView,
   Platform,
+  StatusBar,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Text } from "../../components/common/Text";
@@ -128,7 +129,8 @@ export const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
+    backgroundColor: colors.grey[100],
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
     flexDirection: "row",

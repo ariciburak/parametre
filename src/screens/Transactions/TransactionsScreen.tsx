@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, SafeAreaView, Platform } from "react-native";
+import { View, StyleSheet, SafeAreaView, Platform, StatusBar } from "react-native";
 import { Text } from "../../components/common/Text";
 import { TransactionList } from "./components/TransactionList";
 import { TransactionDetailModal } from "./components/TransactionDetailModal";
@@ -41,6 +41,8 @@ export const TransactionsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.grey[100],
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
     flexDirection: "row",
@@ -59,6 +61,5 @@ const styles = StyleSheet.create({
   content: {
     height: "100%",
     backgroundColor: colors.grey[100],
-
   },
 });

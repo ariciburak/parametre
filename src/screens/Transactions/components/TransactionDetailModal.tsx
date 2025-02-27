@@ -54,7 +54,6 @@ const ModalContent = React.memo(
         { cancelable: true }
       );
     };
-    console.log("FAKFAK", transaction.photoDescription);
 
     return (
       <View style={styles.container}>

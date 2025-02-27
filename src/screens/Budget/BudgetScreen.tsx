@@ -5,6 +5,8 @@ import {
   SafeAreaView,
   ScrollView,
   Pressable,
+  Platform,
+  StatusBar,
 } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Text } from '../../components/common/Text'
@@ -116,6 +118,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background.default,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
     flexDirection: 'row',

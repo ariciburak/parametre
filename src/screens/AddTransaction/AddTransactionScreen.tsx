@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: Platform.OS === 'ios' ? 180 : 150,
+    paddingBottom: Platform.OS === 'ios' ? 180 : 230,
   },
   card: {
     padding: spacing.screen.sm,
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 80 : 60,
+    bottom: Platform.OS === 'ios' ? 80 : 70,
     left: 0,
     right: 0,
     backgroundColor: colors.common.white,
