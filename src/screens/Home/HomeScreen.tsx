@@ -8,6 +8,7 @@ import {
   StatusBar,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Text } from "../../components/common/Text";
@@ -19,15 +20,22 @@ import { RecentTransactions } from "./components/RecentTransactions";
 import { CategorySummary } from "./components/CategorySummary";
 import { colors, spacing } from "../../theme";
 import useTransactionStore from "../../store/useTransactionStore";
+import useBudgetStore from "../../store/useBudgetStore";
 import { useAuthStore } from "../../store/useAuthStore";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { Transaction, Period } from "../../types/transaction";
+import { BalanceCardSkeleton } from './components/BalanceCardSkeleton';
+import { BudgetCardSkeleton } from './components/BudgetCardSkeleton';
+import { ExpensePieChartSkeleton } from './components/ExpensePieChartSkeleton';
 
 export const HomeScreen = () => {
   const navigation = useNavigation();
-  const { transactions } = useTransactionStore();
+  const { transactions, isLoading: isTransactionsLoading } = useTransactionStore();
+  const { isLoading: isBudgetsLoading } = useBudgetStore();
   const logout = useAuthStore(state => state.logout);
   const [selectedPeriod, setSelectedPeriod] = React.useState<Period>("monthly");
+
+  const isLoading = isTransactionsLoading || isBudgetsLoading;
 
   const handleLogout = () => {
     Alert.alert(
@@ -140,22 +148,34 @@ export const HomeScreen = () => {
           contentContainerStyle={styles.contentInner}
         >
           {/* Bakiye Kartı */}
-          <BalanceCard
-            balance={totalIncome - totalExpense}
-            income={totalIncome}
-            expense={totalExpense}
-            period={selectedPeriod}
-            onPeriodChange={setSelectedPeriod}
-          />
+          {isLoading ? (
+            <BalanceCardSkeleton />
+          ) : (
+            <BalanceCard
+              balance={totalIncome - totalExpense}
+              income={totalIncome}
+              expense={totalExpense}
+              period={selectedPeriod}
+              onPeriodChange={setSelectedPeriod}
+            />
+          )}
 
           {/* Bütçe Kartı */}
-          <BudgetCard />
+          {isLoading ? (
+            <BudgetCardSkeleton />
+          ) : (
+            <BudgetCard />
+          )}
 
           {/* Hızlı İşlem Kartı */}
           <QuickTransactionCard />
 
           {/* Harcama Dağılımı */}
-          <ExpensePieChart transactions={filteredTransactions} />
+          {isLoading ? (
+            <ExpensePieChartSkeleton />
+          ) : (
+            <ExpensePieChart transactions={filteredTransactions} />
+          )}
 
           {/* Son İşlemler */}
           <RecentTransactions
@@ -234,5 +254,15 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
     padding: spacing.screen.sm,
     paddingBottom: Platform.OS === "ios" ? 140 : 120,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: spacing.sm,
+    color: colors.text.secondary,
+    fontSize: 16,
   },
 });
