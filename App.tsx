@@ -28,14 +28,12 @@ function Navigation() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log('Auth state changed:', user?.email);
       setUser(user);
     });
 
     return () => unsubscribe();
   }, [setUser]);
 
-  console.log('Navigation render - initialized:', isInitialized, 'user:', user);
 
   if (!isInitialized) {
     return <LoadingScreen />;
