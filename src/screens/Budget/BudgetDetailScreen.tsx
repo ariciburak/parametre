@@ -90,7 +90,14 @@ export const BudgetDetailScreen = ({ budget, onClose, onSuccess }: BudgetDetailS
     )
   }
 
+  const getProgressColor = (percentage: number) => {
+    if (percentage >= 90) return colors.error.main
+    if (percentage >= 70) return colors.warning.main
+    return colors.success.main
+  }
+
   const percentage = (budget.spent / Number(amount)) * 100
+  const progressColor = getProgressColor(percentage)
 
   return (
     <KeyboardAvoidingView
@@ -159,7 +166,7 @@ export const BudgetDetailScreen = ({ budget, onClose, onSuccess }: BudgetDetailS
                 </View>
                 <View style={styles.statItem}>
                   <Text style={styles.statLabel}>Kullanım</Text>
-                  <Text style={[styles.statValue, { color: percentage >= 100 ? colors.error.main : colors.primary.main }]}>
+                  <Text style={[styles.statValue, { color: progressColor }]}>
                     %{percentage.toFixed(1)}
                   </Text>
                 </View>
@@ -171,13 +178,13 @@ export const BudgetDetailScreen = ({ budget, onClose, onSuccess }: BudgetDetailS
                       styles.progressFill,
                       {
                         width: `${Math.min(percentage, 100)}%`,
-                        backgroundColor: percentage >= 100 ? colors.error.main : colors.primary.main,
+                        backgroundColor: progressColor,
                       },
                     ]}
                   />
                 </View>
                 <Text style={[styles.percentage, { 
-                  color: percentage >= 100 ? colors.error.main : colors.primary.main 
+                  color: progressColor
                 }]}>
                   %{percentage.toFixed(1)} kullanıldı
                 </Text>
