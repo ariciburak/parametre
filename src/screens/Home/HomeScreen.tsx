@@ -6,6 +6,8 @@ import {
   ScrollView,
   Platform,
   StatusBar,
+  TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Text } from "../../components/common/Text";
@@ -17,12 +19,34 @@ import { RecentTransactions } from "./components/RecentTransactions";
 import { CategorySummary } from "./components/CategorySummary";
 import { colors, spacing } from "../../theme";
 import useTransactionStore from "../../store/useTransactionStore";
+import { useAuthStore } from "../../store/useAuthStore";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { Transaction, Period } from "../../types/transaction";
 
 export const HomeScreen = () => {
   const navigation = useNavigation();
   const { transactions } = useTransactionStore();
+  const logout = useAuthStore(state => state.logout);
   const [selectedPeriod, setSelectedPeriod] = React.useState<Period>("monthly");
+
+  const handleLogout = () => {
+    Alert.alert(
+      "Çıkış Yap",
+      "Çıkış yapmak istediğinize emin misiniz?",
+      [
+        {
+          text: "İptal",
+          style: "cancel"
+        },
+        {
+          text: "Çıkış Yap",
+          style: "destructive",
+          onPress: () => logout()
+        }
+      ],
+      { cancelable: true }
+    );
+  };
 
   // Seçili periyoda göre işlemleri filtrele
   const filteredTransactions = React.useMemo(() => {
@@ -85,6 +109,29 @@ export const HomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
+          <View style={styles.titleWrapper}>
+            <Text style={styles.title}>Ana Sayfa</Text>
+            <Text style={styles.subtitle}>Hoş geldiniz</Text>
+          </View>
+          <TouchableOpacity 
+            onPress={handleLogout}
+            style={styles.logoutButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <View style={styles.logoutIconContainer}>
+              <MaterialCommunityIcons 
+                name="exit-to-app" 
+                size={22} 
+                color={colors.common.white}
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+
       {/* Content */}
       <View style={styles.content}>
         <ScrollView
@@ -133,23 +180,52 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
+    backgroundColor: colors.grey[100],
+    paddingTop: Platform.OS === 'ios' ? 12 : 16,
+  },
+  headerContent: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "center",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: spacing.screen.sm,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.lg,
-    height: 70,
+    paddingBottom: spacing.md,
+  },
+  titleWrapper: {
+    flex: 1,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "600",
-    color: colors.common.white,
+    fontSize: 28,
+    fontWeight: "700",
+    color: colors.text.primary,
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: colors.text.secondary,
+    marginTop: 2,
+  },
+  logoutButton: {
+    marginLeft: spacing.md,
+  },
+  logoutIconContainer: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    backgroundColor: '#4B5EAA',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#4B5EAA',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   content: {
     height: "100%",
     backgroundColor: colors.grey[100],
-
   },
   scrollView: {
     flex: 1,
