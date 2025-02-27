@@ -1,13 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   View,
   StyleSheet,
   Pressable,
   Alert,
   TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Text } from '../../components/common/Text'
+import { Button } from '../../components/common/Button'
 import { colors, spacing } from '../../theme'
 import useBudgetStore from '../../store/useBudgetStore'
 import { formatCurrency } from '../../utils/currency'
@@ -21,40 +25,38 @@ interface BudgetDetailScreenProps {
 }
 
 export const BudgetDetailScreen = ({ budget, onClose, onSuccess }: BudgetDetailScreenProps) => {
-  const { updateBudget, deleteBudget } = useBudgetStore()
-  const [amount, setAmount] = React.useState(budget ? budget.amount.toString() : '')
-  const [isEditing, setIsEditing] = React.useState(false)
-
   if (!budget) return null
+
+  const [amount, setAmount] = useState(budget.amount.toString())
+  const [loading, setLoading] = useState(false)
+  const updateBudget = useBudgetStore(state => state.updateBudget)
+  const deleteBudget = useBudgetStore(state => state.deleteBudget)
 
   const category = getCategoryById(budget.categoryId)
   if (!category) return null
 
   const handleAmountChange = (value: string) => {
-    // Sadece sayı ve virgül girişine izin ver
-    const cleanValue = value.replace(/[^0-9,]/g, '')
-    
-    // Virgül kontrolü
-    const parts = cleanValue.split(',')
-    if (parts.length > 2) return // Birden fazla virgül varsa işlemi durdur
-    
-    // Virgülden sonraki kısım için kontrol
-    if (parts[1] && parts[1].length > 2) return
-    
-    setAmount(cleanValue)
+    // Sadece sayısal değerlere izin ver
+    const numericValue = value.replace(/[^0-9]/g, '')
+    setAmount(numericValue)
   }
 
   const handleSave = () => {
-    const newAmount = Number(amount.replace(',', '.'))
-    if (!newAmount || newAmount <= 0) {
-      Alert.alert('Uyarı', 'Lütfen geçerli bir tutar giriniz')
-      return
-    }
+    if (!amount) return
 
+    setLoading(true)
     updateBudget(budget.id, {
-      amount: newAmount
+      amount: Number(amount),
     })
-    onSuccess()
+      .then(() => {
+        onSuccess()
+      })
+      .catch((error) => {
+        Alert.alert('Hata', 'Bütçe güncellenirken bir hata oluştu.')
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   const handleDelete = () => {
@@ -70,273 +72,218 @@ export const BudgetDetailScreen = ({ budget, onClose, onSuccess }: BudgetDetailS
           text: 'Sil',
           style: 'destructive',
           onPress: () => {
+            setLoading(true)
             deleteBudget(budget.id)
-            onSuccess()
+              .then(() => {
+                onSuccess()
+              })
+              .catch((error) => {
+                Alert.alert('Hata', 'Bütçe silinirken bir hata oluştu.')
+              })
+              .finally(() => {
+                setLoading(false)
+              })
           },
         },
-      ]
+      ],
+      { cancelable: true }
     )
   }
 
+  const percentage = (budget.spent / Number(amount)) * 100
+
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <View style={[styles.categoryIcon, { backgroundColor: category.color }]}>
-            <MaterialCommunityIcons
-              name={category.icon}
-              size={32}
-              color={colors.common.white}
-            />
-          </View>
-          <View style={styles.headerTexts}>
-            <Text style={styles.title}>{category.label}</Text>
-            <Text style={styles.subtitle}>{budget.month}</Text>
-          </View>
-        </View>
-        <Pressable
-          onPress={handleDelete}
-          style={({ pressed }) => [
-            styles.deleteButton,
-            pressed && styles.pressed,
-          ]}
-        >
-          <MaterialCommunityIcons
-            name="trash-can-outline"
-            size={24}
-            color={colors.error.main}
-          />
-        </Pressable>
-      </View>
-
-      {/* Content */}
-      <View style={styles.content}>
-        {/* Bütçe Tutarı */}
-        <View style={styles.formGroup}>
-          <View style={styles.labelContainer}>
-            <MaterialCommunityIcons
-              name="currency-try"
-              size={20}
-              color={colors.primary.main}
-            />
-            <Text style={styles.label}>Aylık Hedef Bütçe</Text>
-          </View>
-          {isEditing ? (
-            <View style={styles.amountContainer}>
-              <Text style={styles.currency}>₺</Text>
-              <TextInput
-                style={styles.amountInput}
-                value={amount}
-                onChangeText={handleAmountChange}
-                placeholder="0,00"
-                keyboardType="decimal-pad"
-                placeholderTextColor={colors.text.secondary}
-                autoFocus
-              />
-            </View>
-          ) : (
-            <Pressable
-              style={styles.amountDisplay}
-              onPress={() => setIsEditing(true)}
-            >
-              <Text style={styles.amountText}>
-                {formatCurrency(budget.amount)}
-              </Text>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.content}>
+          {/* Header */}
+          <View style={styles.header}>
+            <View style={[styles.iconContainer, { backgroundColor: category.color }]}>
               <MaterialCommunityIcons
-                name="pencil"
-                size={20}
-                color={colors.text.secondary}
+                name={category.icon}
+                size={24}
+                color={colors.common.white}
               />
-            </Pressable>
-          )}
-        </View>
+            </View>
+            <View style={styles.headerContent}>
+              <Text style={styles.category}>{category.label}</Text>
+              <Text style={styles.month}>
+                {new Date(budget.month + '-01').toLocaleDateString('tr-TR', {
+                  year: 'numeric',
+                  month: 'long',
+                })}
+              </Text>
+            </View>
+          </View>
 
-        {/* Harcama Durumu */}
-        <View style={styles.formGroup}>
-          <View style={styles.labelContainer}>
-            <MaterialCommunityIcons
-              name="chart-line"
-              size={20}
-              color={colors.primary.main}
-            />
-            <Text style={styles.label}>Harcama Durumu</Text>
-          </View>
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Harcanan</Text>
-              <Text style={[styles.statValue, { color: colors.error.main }]}>
-                {formatCurrency(budget.spent)}
-              </Text>
+          {/* Form */}
+          <View style={styles.form}>
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Hedef Bütçe</Text>
+              <View style={styles.inputContainer}>
+                <MaterialCommunityIcons
+                  name="currency-try"
+                  size={20}
+                  color={colors.text.secondary}
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  style={styles.input}
+                  value={amount}
+                  onChangeText={handleAmountChange}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor={colors.text.secondary}
+                />
+              </View>
             </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Kalan</Text>
-              <Text style={[styles.statValue, { color: colors.success.main }]}>
-                {formatCurrency(budget.amount - budget.spent)}
-              </Text>
-            </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Kullanım</Text>
-              <Text style={[styles.statValue, { color: budget.percentage >= 100 ? colors.error.main : colors.primary.main }]}>
-                %{budget.percentage.toFixed(1)}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBar}>
-              <View
-                style={[
-                  styles.progressFill,
-                  {
-                    width: `${Math.min(budget.percentage, 100)}%`,
-                    backgroundColor: budget.percentage >= 100 ? colors.error.main : colors.primary.main,
-                  },
-                ]}
-              />
+
+            {/* Harcama Durumu */}
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Harcama Durumu</Text>
+              <View style={styles.statsContainer}>
+                <View style={styles.statItem}>
+                  <Text style={styles.statLabel}>Harcanan</Text>
+                  <Text style={[styles.statValue, { color: colors.error.main }]}>
+                    {formatCurrency(budget.spent)}
+                  </Text>
+                </View>
+                <View style={styles.statItem}>
+                  <Text style={styles.statLabel}>Kalan</Text>
+                  <Text style={[styles.statValue, { color: colors.success.main }]}>
+                    {formatCurrency(Number(amount) - budget.spent)}
+                  </Text>
+                </View>
+                <View style={styles.statItem}>
+                  <Text style={styles.statLabel}>Kullanım</Text>
+                  <Text style={[styles.statValue, { color: percentage >= 100 ? colors.error.main : colors.primary.main }]}>
+                    %{percentage.toFixed(1)}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.progressContainer}>
+                <View style={styles.progressBar}>
+                  <View
+                    style={[
+                      styles.progressFill,
+                      {
+                        width: `${Math.min(percentage, 100)}%`,
+                        backgroundColor: percentage >= 100 ? colors.error.main : colors.primary.main,
+                      },
+                    ]}
+                  />
+                </View>
+                <Text style={[styles.percentage, { 
+                  color: percentage >= 100 ? colors.error.main : colors.primary.main 
+                }]}>
+                  %{percentage.toFixed(1)} kullanıldı
+                </Text>
+              </View>
             </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
 
       {/* Footer */}
-      {isEditing && (
-        <View style={styles.footer}>
-          <Pressable
-            style={({ pressed }) => [
-              styles.footerButton,
-              styles.cancelButton,
-              pressed && styles.pressed,
-            ]}
-            onPress={() => {
-              setIsEditing(false)
-              setAmount(budget.amount.toString())
-            }}
-          >
-            <Text style={styles.cancelButtonText}>İptal</Text>
-          </Pressable>
-          <Pressable
-            style={({ pressed }) => [
-              styles.footerButton,
-              styles.saveButton,
-              pressed && styles.pressed,
-            ]}
-            onPress={handleSave}
-          >
-            <Text style={styles.saveButtonText}>Kaydet</Text>
-          </Pressable>
-        </View>
-      )}
-    </View>
+      <View style={styles.footer}>
+        <Button
+          variant="primary"
+          size="large"
+          loading={loading}
+          onPress={handleSave}
+          fullWidth
+          style={styles.saveButton}
+        >
+          Kaydet
+        </Button>
+
+        <Button
+          variant="primary"
+          size="large"
+          loading={loading}
+          onPress={handleDelete}
+          fullWidth
+          style={styles.deleteButton}
+        >
+          Bütçeyi Sil
+        </Button>
+      </View>
+    </KeyboardAvoidingView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.default,
+    backgroundColor: colors.common.white,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  content: {
+    padding: spacing.screen.sm,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: spacing.screen.sm,
-    backgroundColor: colors.common.white,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border.light,
+    marginBottom: spacing.xl,
   },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  categoryIcon: {
+  iconContainer: {
     width: 48,
     height: 48,
     borderRadius: 24,
+    backgroundColor: colors.primary.main,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: spacing.sm,
   },
-  headerTexts: {
-    flex: 1,
+  headerContent: {
+    marginLeft: spacing.sm,
   },
-  title: {
-    fontSize: 20,
+  category: {
+    fontSize: 18,
     fontWeight: '600',
     color: colors.text.primary,
-    marginBottom: spacing.xs,
+    marginBottom: 4,
   },
-  subtitle: {
+  month: {
     fontSize: 14,
     color: colors.text.secondary,
   },
-  deleteButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  content: {
-    flex: 1,
-    padding: spacing.screen.sm,
+  form: {
+    gap: spacing.lg,
   },
   formGroup: {
-    backgroundColor: colors.common.white,
-    borderRadius: 12,
-    padding: spacing.md,
-    marginBottom: spacing.md,
-  },
-  labelContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.md,
+    gap: spacing.sm,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text.primary,
-    marginLeft: spacing.xs,
+    fontSize: 14,
+    color: colors.text.secondary,
   },
-  amountContainer: {
+  inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: spacing.md,
     backgroundColor: colors.grey[50],
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border.light,
+    paddingHorizontal: spacing.sm,
   },
-  currency: {
-    fontSize: 24,
-    fontWeight: '500',
-    color: colors.text.primary,
+  inputIcon: {
     marginRight: spacing.xs,
   },
-  amountInput: {
+  input: {
     flex: 1,
-    fontSize: 24,
-    color: colors.text.primary,
-    padding: 0,
-  },
-  amountDisplay: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: spacing.md,
-    backgroundColor: colors.grey[50],
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border.light,
-  },
-  amountText: {
-    fontSize: 24,
-    fontWeight: '500',
+    height: 48,
+    fontSize: 16,
     color: colors.text.primary,
   },
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: spacing.md,
+    backgroundColor: colors.grey[50],
+    borderRadius: 12,
+    padding: spacing.md,
   },
   statItem: {
     flex: 1,
@@ -350,52 +297,39 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 16,
     fontWeight: '600',
+    color: colors.text.primary,
   },
   progressContainer: {
-    marginTop: spacing.xs,
+    marginTop: spacing.sm,
   },
   progressBar: {
     height: 8,
     backgroundColor: colors.grey[100],
     borderRadius: 4,
     overflow: 'hidden',
+    marginBottom: spacing.xs,
   },
   progressFill: {
     height: '100%',
     borderRadius: 4,
   },
+  percentage: {
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'right',
+  },
   footer: {
-    flexDirection: 'row',
     padding: spacing.screen.sm,
+    paddingBottom: Platform.OS === 'ios' ? 34 : spacing.screen.sm,
     backgroundColor: colors.common.white,
     borderTopWidth: 1,
     borderTopColor: colors.border.light,
     gap: spacing.sm,
   },
-  footerButton: {
-    flex: 1,
-    height: 48,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cancelButton: {
-    backgroundColor: colors.grey[100],
-  },
   saveButton: {
     backgroundColor: colors.primary.main,
   },
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text.primary,
-  },
-  saveButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.common.white,
-  },
-  pressed: {
-    opacity: 0.7,
+  deleteButton: {
+    backgroundColor: colors.error.main,
   },
 }) 

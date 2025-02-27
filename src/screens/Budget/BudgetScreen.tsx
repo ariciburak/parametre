@@ -154,5 +154,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: spacing.screen.xs,
+    paddingBottom: Platform.OS === 'ios' ? 100 : 80,
   },
 }) 

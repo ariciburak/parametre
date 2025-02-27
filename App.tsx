@@ -7,6 +7,8 @@ import { useEffect } from 'react';
 import { auth } from './src/firebase/config';
 import { onAuthStateChanged } from 'firebase/auth';
 import { View, ActivityIndicator } from 'react-native';
+import useTransactionStore from './src/store/useTransactionStore';
+import useBudgetStore from './src/store/useBudgetStore';
 
 function LoadingScreen() {
   return (
@@ -21,19 +23,37 @@ function Navigation() {
   const isInitialized = useAuthStore(state => state.isInitialized);
   const setUser = useAuthStore(state => state.setUser);
   const initialize = useAuthStore(state => state.initialize);
+  const initializeTransactions = useTransactionStore(state => state.initialize);
+  const initializeBudgets = useBudgetStore(state => state.initialize);
 
   useEffect(() => {
     initialize();
   }, [initialize]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    let unsubscribeTransactions: (() => void) | undefined;
+    let unsubscribeBudgets: (() => void) | undefined;
+
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       setUser(user);
+      
+      if (user) {
+        // Kullanıcı oturum açtığında store'ları başlat
+        unsubscribeTransactions = initializeTransactions();
+        unsubscribeBudgets = initializeBudgets();
+      } else {
+        // Kullanıcı çıkış yaptığında listener'ları temizle
+        if (unsubscribeTransactions) unsubscribeTransactions();
+        if (unsubscribeBudgets) unsubscribeBudgets();
+      }
     });
 
-    return () => unsubscribe();
-  }, [setUser]);
-
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeTransactions) unsubscribeTransactions();
+      if (unsubscribeBudgets) unsubscribeBudgets();
+    };
+  }, [setUser, initializeTransactions, initializeBudgets]);
 
   if (!isInitialized) {
     return <LoadingScreen />;

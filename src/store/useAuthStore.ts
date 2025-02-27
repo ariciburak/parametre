@@ -2,7 +2,8 @@ import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User } from 'firebase/auth';
 import { auth } from '../firebase/config';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, signInWithCustomToken } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { migrateToFirestore } from '../utils/migration';
 
 interface AuthState {
   user: User | null;
@@ -15,6 +16,7 @@ interface AuthState {
 }
 
 const STORAGE_KEY = '@auth_credentials';
+const MIGRATION_KEY = '@migration_completed';
 
 interface StoredCredentials {
   email: string;
@@ -46,6 +48,19 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
   setUser: async (user) => {
     set({ user });
+
+    // Kullanıcı giriş yaptığında ve migration henüz yapılmamışsa migration'ı başlat
+    if (user) {
+      const migrationCompleted = await AsyncStorage.getItem(MIGRATION_KEY);
+      if (!migrationCompleted) {
+        try {
+          await migrateToFirestore();
+          await AsyncStorage.setItem(MIGRATION_KEY, 'true');
+        } catch (error) {
+          console.error('Migration error:', error);
+        }
+      }
+    }
   },
   login: async (email, password) => {
     try {
