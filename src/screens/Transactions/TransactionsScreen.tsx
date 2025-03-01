@@ -3,28 +3,95 @@ import { View, StyleSheet, SafeAreaView, Platform, StatusBar } from "react-nativ
 import { Text } from "../../components/common/Text";
 import { TransactionList } from "./components/TransactionList";
 import { TransactionDetailModal } from "./components/TransactionDetailModal";
+import { TransactionFilters } from "./components/TransactionFilters";
 import useTransactionStore from "../../store/useTransactionStore";
 import { colors, spacing } from "../../theme";
 import type { Transaction } from "../../types/transaction";
+import type { TransactionType } from "../../constants/transactions";
+import { categories } from "../../constants/categories";
+import type { Category } from "../../types/category";
+
+interface FilterState {
+  type?: TransactionType;
+  categoryIds?: string[];
+  dateRange?: {
+    start: Date;
+    end: Date;
+  };
+  amountRange?: {
+    min?: number;
+    max?: number;
+  };
+}
 
 export const TransactionsScreen = () => {
   const { transactions } = useTransactionStore();
   const [selectedTransaction, setSelectedTransaction] =
     React.useState<Transaction>();
   const [showDetailModal, setShowDetailModal] = React.useState(false);
+  const [filters, setFilters] = React.useState<FilterState>({});
+
+  // Mevcut işlemlerdeki benzersiz kategorileri bul
+  const uniqueCategories = React.useMemo(() => {
+    const categoryIds = new Set(transactions.map(t => t.categoryId));
+    return categories.filter((c: Category) => categoryIds.has(c.id));
+  }, [transactions]);
 
   const handleTransactionPress = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
     setShowDetailModal(true);
   };
 
+  // Filtreleme işlemi
+  const filteredTransactions = React.useMemo(() => {
+    return transactions.filter((transaction) => {
+      // İşlem türü filtresi
+      if (filters.type && transaction.type !== filters.type) {
+        return false;
+      }
+
+      // Kategori filtresi
+      if (filters.categoryIds?.length && !filters.categoryIds.includes(transaction.categoryId)) {
+        return false;
+      }
+
+      // Tarih aralığı filtresi
+      if (filters.dateRange) {
+        const transactionDate = new Date(transaction.date);
+        if (
+          transactionDate < filters.dateRange.start ||
+          transactionDate > filters.dateRange.end
+        ) {
+          return false;
+        }
+      }
+
+      // Tutar aralığı filtresi
+      if (filters.amountRange) {
+        if (
+          (filters.amountRange.min !== undefined && transaction.amount < filters.amountRange.min) ||
+          (filters.amountRange.max !== undefined && transaction.amount > filters.amountRange.max)
+        ) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [transactions, filters]);
+
   return (
     <SafeAreaView style={styles.container}>
 
       {/* Content */}
       <View style={styles.content}>
+        <TransactionFilters
+          filters={filters}
+          onFilterChange={setFilters}
+          availableCategories={uniqueCategories}
+        />
         <TransactionList
-          transactions={transactions}
+          transactions={filteredTransactions}
           onTransactionPress={handleTransactionPress}
         />
       </View>
