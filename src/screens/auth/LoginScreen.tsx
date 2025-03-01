@@ -19,19 +19,39 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const login = useAuthStore(state => state.login);
+  const [loading, setLoading] = useState(false);
+  const { login, resetAuth } = useAuthStore();
   const navigation = useNavigation();
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Hata', 'Lütfen tüm alanları doldurun.');
+      Alert.alert('Hata', 'Lütfen email ve şifrenizi girin.');
       return;
     }
 
+    setLoading(true);
     try {
+      await resetAuth(); // Önce auth state'i temizle
       await login(email, password);
     } catch (error: any) {
-      Alert.alert('Hata', error.message);
+      console.error('Login error details:', error);
+      let errorMessage = 'Giriş yapılırken bir hata oluştu.';
+      
+      if (error.code === 'auth/invalid-credential') {
+        errorMessage = 'Email veya şifre hatalı.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Geçersiz email adresi.';
+      } else if (error.code === 'auth/user-disabled') {
+        errorMessage = 'Bu hesap devre dışı bırakılmış.';
+      } else if (error.code === 'auth/user-not-found') {
+        errorMessage = 'Bu email adresi ile kayıtlı kullanıcı bulunamadı.';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = 'Hatalı şifre.';
+      }
+
+      Alert.alert('Hata', errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 

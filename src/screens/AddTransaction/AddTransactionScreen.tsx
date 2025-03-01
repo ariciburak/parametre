@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Platform, ScrollView, Pressable, TextInput, KeyboardAvoidingView, Keyboard, Animated, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
@@ -15,6 +15,7 @@ import useTransactionStore from '../../store/useTransactionStore'
 import type { TransactionType } from '../../constants/transactions'
 import type { TransactionFormValues } from '../../types/transaction'
 import { getCategoryById } from '../../constants/categories'
+import { useAnalytics } from '../../hooks/useAnalytics'
 
 const initialFormValues: TransactionFormValues = {
   type: 'income',
@@ -26,6 +27,7 @@ const initialFormValues: TransactionFormValues = {
 
 export const AddTransactionScreen = () => {
   const navigation = useNavigation()
+  const { logScreenView, logTransaction } = useAnalytics()
   const addTransaction = useTransactionStore(state => state.addTransaction)
   const [loading, setLoading] = useState(false)
   const [formValues, setFormValues] = useState<TransactionFormValues>(initialFormValues)
@@ -33,6 +35,10 @@ export const AddTransactionScreen = () => {
   const [showCategoryModal, setShowCategoryModal] = useState(false)
   const [isKeyboardVisible, setKeyboardVisible] = useState(false)
   const keyboardButtonAnimation = React.useRef(new Animated.Value(0)).current
+
+  useEffect(() => {
+    logScreenView('AddTransaction', 'AddTransactionScreen')
+  }, [])
 
   React.useEffect(() => {
     const keyboardWillShow = Keyboard.addListener(
@@ -74,8 +80,8 @@ export const AddTransactionScreen = () => {
   }
 
   const handleSubmit = async () => {
+    setLoading(true)
     try {
-      setLoading(true)
       // Form validasyonu
       if (!formValues.amount || formValues.amount === '0') {
         // TODO: Hata gösterimi eklenecek
@@ -89,9 +95,18 @@ export const AddTransactionScreen = () => {
       const categoryId = formValues.categoryId || otherCategoryId
 
       // İşlemi kaydet
-      addTransaction({
+      await addTransaction({
         ...formValues,
         categoryId,
+        amount: formValues.amount,
+      })
+
+      // Analytics'e kaydet
+      logTransaction({
+        id: formValues.type + '_' + Date.now(),
+        type: formValues.type,
+        amount: parseFloat(formValues.amount.replace(/\./g, '').replace(/,/g, '.')),
+        categoryId: categoryId,
       })
 
       // Form değerlerini sıfırla

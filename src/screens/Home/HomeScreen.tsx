@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -27,30 +27,49 @@ import type { Transaction, Period } from "../../types/transaction";
 import { BalanceCardSkeleton } from './components/BalanceCardSkeleton';
 import { BudgetCardSkeleton } from './components/BudgetCardSkeleton';
 import { ExpensePieChartSkeleton } from './components/ExpensePieChartSkeleton';
+import { useAnalytics } from "../../hooks/useAnalytics";
 
 export const HomeScreen = () => {
   const navigation = useNavigation();
-  const { transactions, isLoading: isTransactionsLoading } = useTransactionStore();
-  const { isLoading: isBudgetsLoading } = useBudgetStore();
-  const logout = useAuthStore(state => state.logout);
+  const { logScreenView, logButtonClick } = useAnalytics();
+  const transactions = useTransactionStore((state) => state.transactions);
+  const isLoading = useTransactionStore((state) => state.isLoading);
+  const budgets = useBudgetStore((state) => state.budgets);
+  const isBudgetsLoading = useBudgetStore((state) => state.isLoading);
+  const logout = useAuthStore((state) => state.logout);
   const [selectedPeriod, setSelectedPeriod] = React.useState<Period>("monthly");
 
-  const isLoading = isTransactionsLoading || isBudgetsLoading;
+  useEffect(() => {
+    logScreenView('Home', 'HomeScreen');
+  }, []);
+
+  const handleAddTransaction = () => {
+    logButtonClick('add_transaction', 'HomeScreen');
+    navigation.navigate('AddTransaction' as never);
+  };
+
+  const handleSeeAllTransactions = () => {
+    logButtonClick('see_all_transactions', 'HomeScreen');
+    navigation.navigate('Transactions' as never);
+  };
 
   const handleLogout = () => {
     Alert.alert(
-      "Çıkış Yap",
-      "Çıkış yapmak istediğinize emin misiniz?",
+      'Çıkış Yap',
+      'Çıkış yapmak istediğinize emin misiniz?',
       [
         {
-          text: "İptal",
-          style: "cancel"
+          text: 'İptal',
+          style: 'cancel',
         },
         {
-          text: "Çıkış Yap",
-          style: "destructive",
-          onPress: () => logout()
-        }
+          text: 'Çıkış Yap',
+          style: 'destructive',
+          onPress: () => {
+            logButtonClick('sign_out', 'HomeScreen');
+            logout();
+          },
+        },
       ],
       { cancelable: true }
     );
@@ -106,10 +125,6 @@ export const HomeScreen = () => {
       { totalIncome: 0, totalExpense: 0 }
     );
   }, [filteredTransactions]);
-
-  const handleSeeAllTransactions = () => {
-    navigation.navigate("Transactions" as never);
-  };
 
   const handleTransactionPress = (transaction: Transaction) => {
     // TODO: İşlem detayına git

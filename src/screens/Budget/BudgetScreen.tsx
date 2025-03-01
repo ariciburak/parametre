@@ -19,8 +19,10 @@ import { AddBudgetScreen } from './AddBudgetScreen'
 import { BottomSheet } from '../../components/common/BottomSheet'
 import type { BudgetWithCategory } from '../../types/budget'
 import { BudgetDetailScreen } from './BudgetDetailScreen'
+import { useAnalytics } from '../../hooks/useAnalytics'
 
 export const BudgetScreen = () => {
+  const { logScreenView, logButtonClick } = useAnalytics()
   const [selectedMonth, setSelectedMonth] = React.useState(() => {
     const now = new Date()
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
@@ -33,8 +35,19 @@ export const BudgetScreen = () => {
   const { getMonthlyBudgetSummary } = useBudgetStore()
   const budgetSummary = getMonthlyBudgetSummary(selectedMonth)
 
+  React.useEffect(() => {
+    logScreenView('Budget', 'BudgetScreen')
+  }, [])
+
   const handleAddBudget = () => {
+    logButtonClick('add_budget', 'BudgetScreen')
     setShowAddBudget(true)
+  }
+
+  const handleBudgetPress = (budget: BudgetWithCategory) => {
+    logButtonClick('view_budget_detail', 'BudgetScreen')
+    setShowBudgetDetail(true)
+    setSelectedBudget(budget)
   }
 
   return (
@@ -76,10 +89,7 @@ export const BudgetScreen = () => {
           {/* Bütçe Listesi */}
           <BudgetList
             budgets={budgetSummary.categories}
-            onBudgetPress={(budget: BudgetWithCategory) => {
-              setShowBudgetDetail(true)
-              setSelectedBudget(budget)
-            }}
+            onBudgetPress={handleBudgetPress}
           />
         </ScrollView>
       </View>

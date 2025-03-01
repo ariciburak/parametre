@@ -16,8 +16,10 @@ import { CategoryDistributionWidget } from './components/widgets/CategoryDistrib
 import { TrendAnalysisWidget } from './components/widgets/TrendAnalysisWidget';
 import { SpendingPredictionsWidget } from './components/widgets/SpendingPredictionsWidget';
 import { BudgetTrackingWidget } from './components/widgets/BudgetTrackingWidget';
+import { useAnalytics } from '../../hooks/useAnalytics';
 
 export const AnalyticsDashboard = () => {
+  const { logScreenView, logButtonClick } = useAnalytics();
   const { transactions } = useTransactionStore();
   const [selectedPeriod, setSelectedPeriod] = React.useState(() => {
     const now = new Date();
@@ -26,6 +28,15 @@ export const AnalyticsDashboard = () => {
       year: now.getFullYear(),
     };
   });
+
+  React.useEffect(() => {
+    logScreenView('Analytics', 'AnalyticsDashboard');
+  }, []);
+
+  const handlePeriodChange = (newPeriod: { month: number; year: number }) => {
+    logButtonClick('change_period', 'AnalyticsDashboard');
+    setSelectedPeriod(newPeriod);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -45,7 +56,7 @@ export const AnalyticsDashboard = () => {
           {/* Dönem Seçici */}
           <PeriodSelector
             period={selectedPeriod}
-            onChange={setSelectedPeriod}
+            onChange={handlePeriodChange}
           />
 
           {/* Dashboard içeriği */}

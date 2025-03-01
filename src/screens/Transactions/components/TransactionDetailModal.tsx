@@ -9,6 +9,7 @@ import { Transaction } from "../../../types/transaction";
 import { formatCurrency } from "../../../utils/currency";
 import { getCategoryById } from "../../../constants/categories";
 import useTransactionStore from "../../../store/useTransactionStore";
+import { useAnalytics } from "../../../hooks/useAnalytics";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
@@ -147,7 +148,34 @@ export const TransactionDetailModal = ({
   visible,
   onClose,
 }: TransactionDetailModalProps) => {
+  const { logButtonClick } = useAnalytics();
+  const removeTransaction = useTransactionStore((state) => state.removeTransaction);
+
   if (!transaction) return null;
+
+  const category = getCategoryById(transaction.categoryId);
+
+  const handleDelete = () => {
+    Alert.alert(
+      "İşlemi Sil",
+      "Bu işlemi silmek istediğinize emin misiniz?",
+      [
+        {
+          text: "İptal",
+          style: "cancel",
+        },
+        {
+          text: "Sil",
+          style: "destructive",
+          onPress: async () => {
+            logButtonClick('delete_transaction', 'TransactionDetailModal');
+            await removeTransaction(transaction.id);
+            onClose();
+          },
+        },
+      ]
+    );
+  };
 
   return (
     <BottomSheet

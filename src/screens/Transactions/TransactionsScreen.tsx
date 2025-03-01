@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, Platform, StatusBar } from "react-native";
 import { Text } from "../../components/common/Text";
 import { TransactionList } from "./components/TransactionList";
@@ -10,6 +10,7 @@ import type { Transaction } from "../../types/transaction";
 import type { TransactionType } from "../../constants/transactions";
 import { categories } from "../../constants/categories";
 import type { Category } from "../../types/category";
+import { useAnalytics } from "../../hooks/useAnalytics";
 
 interface FilterState {
   type?: TransactionType;
@@ -25,11 +26,16 @@ interface FilterState {
 }
 
 export const TransactionsScreen = () => {
-  const { transactions } = useTransactionStore();
+  const { logScreenView, logFilter } = useAnalytics();
+  const transactions = useTransactionStore((state) => state.transactions);
   const [selectedTransaction, setSelectedTransaction] =
     React.useState<Transaction>();
   const [showDetailModal, setShowDetailModal] = React.useState(false);
   const [filters, setFilters] = React.useState<FilterState>({});
+
+  useEffect(() => {
+    logScreenView('Transactions', 'TransactionsScreen');
+  }, []);
 
   // Mevcut işlemlerdeki benzersiz kategorileri bul
   const uniqueCategories = React.useMemo(() => {
@@ -40,6 +46,15 @@ export const TransactionsScreen = () => {
   const handleTransactionPress = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
     setShowDetailModal(true);
+  };
+
+  const handleFilterChange = (newFilters: FilterState) => {
+    setFilters(newFilters);
+    logFilter({
+      type: newFilters.type,
+      categoryIds: newFilters.categoryIds,
+      dateRange: newFilters.dateRange ? 'custom' : undefined,
+    });
   };
 
   // Filtreleme işlemi
@@ -87,7 +102,7 @@ export const TransactionsScreen = () => {
       <View style={styles.content}>
         <TransactionFilters
           filters={filters}
-          onFilterChange={setFilters}
+          onFilterChange={handleFilterChange}
           availableCategories={uniqueCategories}
         />
         <TransactionList

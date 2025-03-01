@@ -13,6 +13,7 @@ interface AuthState {
   logout: () => Promise<void>;
   setUser: (user: User | null) => Promise<void>;
   initialize: () => Promise<void>;
+  resetAuth: () => Promise<void>;
 }
 
 const STORAGE_KEY = '@auth_credentials';
@@ -46,10 +47,18 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ isInitialized: true });
     }
   },
+  resetAuth: async () => {
+    try {
+      await AsyncStorage.multiRemove([STORAGE_KEY, MIGRATION_KEY]);
+      set({ user: null, isInitialized: true });
+      console.log('Auth store reset successfully');
+    } catch (error) {
+      console.error('Error resetting auth store:', error);
+    }
+  },
   setUser: async (user) => {
     set({ user });
 
-    // Kullanıcı giriş yaptığında ve migration henüz yapılmamışsa migration'ı başlat
     if (user) {
       const migrationCompleted = await AsyncStorage.getItem(MIGRATION_KEY);
       if (!migrationCompleted) {
