@@ -43,11 +43,15 @@ const useBudgetStore = create<BudgetState>((set, get) => ({
   addBudget: async (formValues: BudgetFormValues) => {
     try {
       // Form değerlerini Budget tipine dönüştür
-      const now = new Date()
+      const now = new Date();
+      const amount = formValues.amount 
+        ? Number(formValues.amount.toString().replace(/\./g, '').replace(/,/g, '.'))
+        : 0;
+
       const newBudget: Omit<Budget, 'id'> = {
         month: formValues.month,
         categoryId: formValues.categoryId,
-        amount: Number(formValues.amount.replace(/\./g, '').replace(/,/g, '.')),
+        amount,
         spent: 0,
         createdAt: now,
         updatedAt: now

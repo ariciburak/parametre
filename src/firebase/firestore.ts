@@ -248,4 +248,96 @@ export const migrateDataToFirestore = async (
   });
 
   await batch.commit();
+};
+
+export const addTransactionWithBudgetUpdate = async (
+  transaction: Omit<Transaction, 'id'>,
+  budgetUpdate?: { budgetId: string; currentSpent: number }
+) => {
+  const batch = writeBatch(db);
+  
+  // İşlem ekleme
+  const transactionRef = doc(getUserCollection('transactions'));
+  batch.set(transactionRef, {
+    ...transaction,
+    date: Timestamp.fromDate(transaction.date),
+    createdAt: Timestamp.fromDate(transaction.createdAt),
+    updatedAt: Timestamp.fromDate(transaction.updatedAt),
+  });
+
+  // Bütçe güncelleme
+  if (budgetUpdate) {
+    const budgetRef = doc(getUserCollection('budgets'), budgetUpdate.budgetId);
+    batch.update(budgetRef, {
+      spent: budgetUpdate.currentSpent,
+      updatedAt: Timestamp.fromDate(new Date())
+    });
+  }
+
+  await batch.commit();
+  return transactionRef.id;
+};
+
+export const removeTransactionWithBudgetUpdate = async (
+  transactionId: string,
+  budgetUpdate?: { budgetId: string; currentSpent: number }
+) => {
+  const batch = writeBatch(db);
+  
+  // İşlemi sil
+  const transactionRef = doc(getUserCollection('transactions'), transactionId);
+  batch.delete(transactionRef);
+
+  // Bütçe güncelleme
+  if (budgetUpdate) {
+    const budgetRef = doc(getUserCollection('budgets'), budgetUpdate.budgetId);
+    batch.update(budgetRef, {
+      spent: budgetUpdate.currentSpent,
+      updatedAt: Timestamp.fromDate(new Date())
+    });
+  }
+
+  await batch.commit();
+};
+
+export const updateTransactionWithBudgetUpdate = async (
+  transactionId: string,
+  transactionUpdate: Partial<Transaction>,
+  budgetUpdates?: { 
+    oldBudget?: { budgetId: string; currentSpent: number };
+    newBudget?: { budgetId: string; currentSpent: number };
+  }
+) => {
+  const batch = writeBatch(db);
+  
+  // İşlemi güncelle
+  const transactionRef = doc(getUserCollection('transactions'), transactionId);
+  const updateData: any = { ...transactionUpdate };
+
+  if (transactionUpdate.date) {
+    updateData.date = Timestamp.fromDate(transactionUpdate.date);
+  }
+  updateData.updatedAt = Timestamp.fromDate(new Date());
+  
+  batch.update(transactionRef, updateData);
+
+  // Eski bütçeyi güncelle
+  if (budgetUpdates?.oldBudget) {
+    const oldBudgetRef = doc(getUserCollection('budgets'), budgetUpdates.oldBudget.budgetId);
+    batch.update(oldBudgetRef, {
+      spent: budgetUpdates.oldBudget.currentSpent,
+      updatedAt: Timestamp.fromDate(new Date())
+    });
+  }
+
+  // Yeni bütçeyi güncelle
+  if (budgetUpdates?.newBudget) {
+    const newBudgetRef = doc(getUserCollection('budgets'), budgetUpdates.newBudget.budgetId);
+    batch.update(newBudgetRef, {
+      spent: budgetUpdates.newBudget.currentSpent,
+      updatedAt: Timestamp.fromDate(new Date())
+    });
+  }
+
+  await batch.commit();
 }; 

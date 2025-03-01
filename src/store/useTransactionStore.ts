@@ -71,20 +71,23 @@ const useTransactionStore = create<TransactionState>((set, get) => ({
         updatedAt: new Date(),
       }
 
-      await FirestoreService.addTransaction(transaction)
-
-      // Bütçe güncelleme
+      let budgetUpdate;
+      // Eğer gider işlemiyse bütçe güncellemesi için bilgileri hazırla
       if (transaction.type === 'expense') {
         const date = new Date(transaction.date)
         const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
         const budget = useBudgetStore.getState().getBudgetByCategory(transaction.categoryId, month)
         
         if (budget) {
-          await FirestoreService.updateBudget(budget.id, {
-            spent: budget.spent + transaction.amount
-          })
+          budgetUpdate = {
+            budgetId: budget.id,
+            currentSpent: (budget.spent || 0) + transaction.amount
+          }
         }
       }
+
+      // İşlem ve bütçe güncellemesini tek seferde yap
+      await FirestoreService.addTransactionWithBudgetUpdate(transaction, budgetUpdate)
     } catch (error) {
       console.error('Error adding transaction:', error)
       throw error
@@ -96,21 +99,21 @@ const useTransactionStore = create<TransactionState>((set, get) => ({
       const transaction = get().transactions.find((t) => t.id === id)
       if (!transaction) return
 
-      await FirestoreService.deleteTransaction(id)
-
-      // Bütçe güncelleme
+      let budgetUpdate;
       if (transaction.type === 'expense') {
         const date = new Date(transaction.date)
         const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
         const budget = useBudgetStore.getState().getBudgetByCategory(transaction.categoryId, month)
         
         if (budget) {
-          await FirestoreService.updateBudget(budget.id, {
-            spent: budget.spent - transaction.amount,
-            updatedAt: new Date()
-          })
+          budgetUpdate = {
+            budgetId: budget.id,
+            currentSpent: Math.max(0, (budget.spent || 0) - transaction.amount)
+          }
         }
       }
+
+      await FirestoreService.removeTransactionWithBudgetUpdate(id, budgetUpdate)
     } catch (error) {
       console.error('Error removing transaction:', error)
       throw error
@@ -127,34 +130,47 @@ const useTransactionStore = create<TransactionState>((set, get) => ({
         updatedAt: new Date(),
       }
 
-      await FirestoreService.updateTransaction(id, updatedTransaction)
+      let budgetUpdates: {
+        oldBudget?: { budgetId: string; currentSpent: number };
+        newBudget?: { budgetId: string; currentSpent: number };
+      } | undefined;
 
-      // Bütçe güncelleme
-      if (oldTransaction.type === 'expense') {
-        const date = new Date(oldTransaction.date)
-        const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
-        const budget = useBudgetStore.getState().getBudgetByCategory(oldTransaction.categoryId, month)
-        
-        if (budget) {
-          await FirestoreService.updateBudget(budget.id, {
-            spent: budget.spent - oldTransaction.amount
-          })
+      // Eğer gider işlemi ise bütçe güncellemelerini hazırla
+      if (oldTransaction.type === 'expense' || updatedFields.type === 'expense') {
+        const oldDate = new Date(oldTransaction.date)
+        const oldMonth = `${oldDate.getFullYear()}-${String(oldDate.getMonth() + 1).padStart(2, '0')}`
+        const oldBudget = useBudgetStore.getState().getBudgetByCategory(oldTransaction.categoryId, oldMonth)
+
+        // Yeni tarih veya kategori varsa yeni bütçeyi bul
+        const newDate = updatedFields.date ? new Date(updatedFields.date) : oldDate
+        const newMonth = `${newDate.getFullYear()}-${String(newDate.getMonth() + 1).padStart(2, '0')}`
+        const newCategoryId = updatedFields.categoryId || oldTransaction.categoryId
+        const newBudget = useBudgetStore.getState().getBudgetByCategory(newCategoryId, newMonth)
+
+        budgetUpdates = {}
+
+        // Eski bütçeden düş
+        if (oldBudget && oldTransaction.type === 'expense') {
+          budgetUpdates.oldBudget = {
+            budgetId: oldBudget.id,
+            currentSpent: Math.max(0, (oldBudget.spent || 0) - oldTransaction.amount)
+          }
+        }
+
+        // Yeni bütçeye ekle
+        if (newBudget && (updatedFields.type === 'expense' || (!('type' in updatedFields) && oldTransaction.type === 'expense'))) {
+          const newAmount = updatedFields.amount !== undefined 
+            ? Number(updatedFields.amount.toString().replace(/\./g, '').replace(/,/g, '.'))
+            : oldTransaction.amount
+
+          budgetUpdates.newBudget = {
+            budgetId: newBudget.id,
+            currentSpent: (newBudget.spent || 0) + newAmount
+          }
         }
       }
 
-      // Yeni işlem gider ise yeni tutarı ekle
-      const newTransaction = { ...oldTransaction, ...updatedFields }
-      if (newTransaction.type === 'expense') {
-        const date = new Date(newTransaction.date)
-        const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
-        const budget = useBudgetStore.getState().getBudgetByCategory(newTransaction.categoryId, month)
-        
-        if (budget) {
-          await FirestoreService.updateBudget(budget.id, {
-            spent: budget.spent + newTransaction.amount
-          })
-        }
-      }
+      await FirestoreService.updateTransactionWithBudgetUpdate(id, updatedTransaction, budgetUpdates)
     } catch (error) {
       console.error('Error updating transaction:', error)
       throw error

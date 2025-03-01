@@ -2,7 +2,7 @@ import { NavigatorScreenParams } from '@react-navigation/native'
 import { BudgetWithCategory } from '../types/budget'
 
 export type RootStackParamList = {
-  Main: NavigatorScreenParams<TabParamList>;
+  Main: undefined;
   AddTransaction: undefined;
   Budget: undefined;
   AddBudget: { month: string };
@@ -14,7 +14,7 @@ export type TabParamList = {
   Home: undefined;
   Transactions: undefined;
   AddTransaction: undefined;
-  Reports: undefined;
+  Analytics: undefined;
   Budget: undefined;
 };
 

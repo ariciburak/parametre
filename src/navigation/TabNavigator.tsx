@@ -10,7 +10,7 @@ import { styles, tabBarStyle, tabBarLabelStyle } from './TabNavigator.styles'
 import { HomeScreen } from '../screens/Home/HomeScreen'
 import { TransactionsScreen } from '../screens/Transactions/TransactionsScreen'
 import { AddTransactionScreen } from '../screens/AddTransaction'
-import { ReportsScreen } from '../screens/Reports/ReportsScreen'
+import { AnalyticsDashboard } from '../screens/Analytics/AnalyticsDashboard'
 import { BudgetScreen } from '../screens/Budget/BudgetScreen'
 
 const Tab = createBottomTabNavigator<TabParamList>()
@@ -25,7 +25,7 @@ export const TabNavigator = () => {
     Home: React.useRef(new Animated.Value(0)).current,
     Transactions: React.useRef(new Animated.Value(0)).current,
     AddTransaction: React.useRef(new Animated.Value(0)).current,
-    Reports: React.useRef(new Animated.Value(0)).current,
+    Analytics: React.useRef(new Animated.Value(0)).current,
     Budget: React.useRef(new Animated.Value(0)).current,
   }
 
@@ -194,17 +194,17 @@ export const TabNavigator = () => {
         }}
       />
       <Tab.Screen 
-        name="Reports" 
-        component={ReportsScreen}
+        name="Analytics" 
+        component={AnalyticsDashboard}
         options={{
-          title: 'Raporlar',
+          title: 'Analizler',
           tabBarIcon: ({ focused }) => (
             <View style={styles.tabItem}>
               <Animated.View 
                 style={[
                   styles.iconContainer, 
                   focused && styles.iconContainerActive,
-                  { transform: [{ translateY: getTranslateY('Reports') }] }
+                  { transform: [{ translateY: getTranslateY('Analytics') }] }
                 ]}
               >
                 <MaterialCommunityIcons 
@@ -217,7 +217,7 @@ export const TabNavigator = () => {
           ),
         }}
         listeners={{
-          tabPress: () => bounce('Reports')
+          tabPress: () => bounce('Analytics')
         }}
       />
       <Tab.Screen 
